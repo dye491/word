@@ -9,7 +9,9 @@ use yii\widgets\ActiveForm;
 use app\assets\TemplateUpdateAsset;
 
 TemplateUpdateAsset::register($this);
-$this->title = 'Заполните переменные шаблона';
+$this->title = "Заполните переменные шаблона \"{$model->name}\"";
+$this->params['breadcrumbs'][] = ['label' => 'Список шаблонов', 'url' => '/template'];
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1><?= Html::encode($this->title) ?></h1>
 <?php ActiveForm::begin(['options' => ['class' => 'form-horizontal']]) ?>

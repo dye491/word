@@ -38,6 +38,7 @@ class TemplateController extends Controller
             }
             $model->vars = Json::encode($postParams);
             if ($model->save()) {
+                $model->makeDocument();
                 return $this->redirect('/template');
             }
         }

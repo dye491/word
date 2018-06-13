@@ -2,8 +2,11 @@
 
 namespace app\models;
 
+use PhpOffice\PhpWord\TemplateProcessor;
 use Yii;
 use yii\helpers\Json;
+use yii\web\UploadedFile;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "template".
@@ -16,8 +19,17 @@ use yii\helpers\Json;
  *
  * @property Variable[] $variables
  */
-class Template extends \yii\db\ActiveRecord
+class Template extends ActiveRecord
 {
+    const
+        TEMPLATE_DIR = '@app/templates',
+        OUTPUT_DIR = '@app/output';
+
+    /**
+     * @var $templateFile UploadedFile
+     */
+    public $templateFile;
+
     /**
      * {@inheritdoc}
      */
@@ -33,6 +45,7 @@ class Template extends \yii\db\ActiveRecord
     {
         return [
             [['name', 'file_name', 'form_class', 'vars'], 'string', 'max' => 255],
+            [['templateFile'], 'file', 'extensions' => 'docx', 'maxSize' => 2000000],
         ];
     }
 
@@ -55,7 +68,7 @@ class Template extends \yii\db\ActiveRecord
      */
     public function getVariables()
     {
-        return $this->hasMany(Variable::className(), ['template_id' => 'id']);
+        return $this->hasMany(Variable::class, ['template_id' => 'id']);
     }
 
     /**
@@ -107,5 +120,48 @@ class Template extends \yii\db\ActiveRecord
         }
 
         return $result;
+    }
+
+    /**
+     * @return bool|string
+     */
+    public function getTemplatePath()
+    {
+        return $this->file_name ?
+            Yii::getAlias(self::TEMPLATE_DIR) . DIRECTORY_SEPARATOR . $this->file_name
+            : false;
+    }
+
+    public function getDocumentPath()
+    {
+        return $this->file_name ?
+            Yii::getAlias(self::OUTPUT_DIR) . DIRECTORY_SEPARATOR . $this->file_name
+            : false;
+
+    }
+    /**
+     * @return bool
+     */
+    public function makeDocument()
+    {
+        $templatePath = $this->getTemplatePath();
+        if (!$templatePath) return false;
+
+        if (!file_exists($templatePath) || !is_file($templatePath)) return false;
+
+        $groupedVars = $this->getVariablesWithValues();
+        $templateProcessor = new TemplateProcessor($templatePath);
+
+        foreach ($groupedVars as $group => $names) {
+            if ($group) {
+
+            } else {
+                foreach ($names as $name => $value) {
+                    $templateProcessor->setValue($name, $value['values']);
+                }
+            }
+        }
+
+        $templateProcessor->saveAs($this->getDocumentPath());
     }
 }
