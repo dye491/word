@@ -7,6 +7,7 @@ $config = [
     'id' => 'basic',
     'language' => 'ru-RU',
     'defaultRoute' => 'template',
+    'name' => 'Менеджер шаблонов',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [

@@ -45,7 +45,8 @@ class Template extends ActiveRecord
     {
         return [
             [['name', 'file_name', 'form_class', 'vars'], 'string', 'max' => 255],
-            [['templateFile'], 'file', 'extensions' => 'docx', 'maxSize' => 2000000],
+            [['templateFile'], 'file', 'extensions' => ['docx'], 'maxSize' => 2000000,
+                                       'checkExtensionByMimeType'=>false],
         ];
     }
 
@@ -139,6 +140,19 @@ class Template extends ActiveRecord
             : false;
 
     }
+
+    /**
+     * @return bool
+     */
+    public function hasDocument()
+    {
+        if (!($path = $this->getDocumentPath())) {
+            return false;
+        }
+
+        return file_exists($path) && is_file($path) && pathinfo($path, PATHINFO_EXTENSION) === 'docx';
+    }
+
     /**
      * @return bool
      */
@@ -154,7 +168,17 @@ class Template extends ActiveRecord
 
         foreach ($groupedVars as $group => $names) {
             if ($group) {
-
+                if (count($names['cols'])) {
+                    $rowIndexCol = array_keys($names['cols'])[0];
+                    $templateProcessor->cloneRow($rowIndexCol, count($names['rows']));
+                    foreach ($names['rows'] as $key => $row) {
+                        foreach ($row as $name => $value) {
+                            $templateProcessor->setValue($name . '#' . ($key + 1), $value);
+                        }
+                        $rowNumber = $key + 1;
+                        $templateProcessor->setValue("rowNumber#{$rowNumber}", $rowNumber);
+                    }
+                }
             } else {
                 foreach ($names as $name => $value) {
                     $templateProcessor->setValue($name, $value['values']);
@@ -163,5 +187,6 @@ class Template extends ActiveRecord
         }
 
         $templateProcessor->saveAs($this->getDocumentPath());
+        return true;
     }
 }

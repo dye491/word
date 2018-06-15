@@ -6,6 +6,7 @@ use app\models\Template;
 use yii\helpers\Json;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
+use yii\web\Response;
 use yii\web\UploadedFile;
 
 class TemplateController extends Controller
@@ -18,6 +19,31 @@ class TemplateController extends Controller
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionCreate()
+    {
+        $model = new Template();
+
+        if ($model->load(\Yii::$app->request->post())) {
+            $uploadedFile = UploadedFile::getInstance($model, 'templateFile');
+            $model->templateFile = $uploadedFile;
+            if ($model->validate()) {
+                if ($uploadedFile && $uploadedFile->error == UPLOAD_ERR_OK &&
+                    $uploadedFile->saveAs(\Yii::getAlias(Template::TEMPLATE_DIR) .
+                        DIRECTORY_SEPARATOR . $uploadedFile->baseName . '.' . $uploadedFile->extension)
+                ) {
+                    $model->file_name = $uploadedFile->baseName . '.' . $uploadedFile->extension;
+                }
+                if ($model->save(false)) {
+                    return $this->redirect('/');
+                }
+            }
+        }
+
+        return $this->render('create', [
+            'model' => $model,
         ]);
     }
 
@@ -60,7 +86,7 @@ class TemplateController extends Controller
             $uploadedFile = UploadedFile::getInstance($model, 'templateFile');
             $model->templateFile = $uploadedFile;
             if ($model->validate()) {
-                if ($uploadedFile->error == UPLOAD_ERR_OK &&
+                if ($uploadedFile && $uploadedFile->error == UPLOAD_ERR_OK &&
                     $uploadedFile->saveAs(\Yii::getAlias(Template::TEMPLATE_DIR) .
                         DIRECTORY_SEPARATOR . $uploadedFile->baseName . '.' . $uploadedFile->extension)
                 ) {
@@ -78,7 +104,29 @@ class TemplateController extends Controller
         ]);
     }
 
-    private static function findModel($id)
+    /**
+     * @param $id
+     * @param $template mixed whether to download template file. If null, then download document file
+     * @return Response|bool
+     */
+    public function actionDownload($id, $template = null)
+    {
+        $model = self::findModel($id);
+
+        if ($model) {
+            $path = $template ? $model->getTemplatePath() : $model->getDocumentPath();
+            if (!file_exists($path) || !is_file($path) ||
+                pathinfo($path, PATHINFO_EXTENSION) !== 'docx')
+                return false;
+
+            return \Yii::$app->response->sendFile($path);
+        }
+
+        return false;
+    }
+
+    private
+    static function findModel($id)
     {
         return Template::findOne(['id' => $id]);
     }

@@ -7,6 +7,7 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 $this->title = 'Список шаблонов';
+$this->params['breadcrumbs'][] = $this->title;
 
 function urlCreator($action, $model, $key, $index, \yii\grid\ActionColumn $column)
 {
@@ -21,7 +22,12 @@ function urlCreator($action, $model, $key, $index, \yii\grid\ActionColumn $colum
 ?>
 <h1><?= Html::encode($this->title) ?></h1>
 
+<p>
+    <?= Html::a('Добавить', ['create'], ['class' => 'btn btn-primary']) ?>
+</p>
+
 <?= GridView::widget([
+//    'caption'      => Html::a('Добавить', '/template/create', ['class' => 'btn btn-primary']),
     'dataProvider' => $dataProvider,
     'columns'      => [
         [
@@ -31,12 +37,12 @@ function urlCreator($action, $model, $key, $index, \yii\grid\ActionColumn $colum
         ],
         'name',
         [
-            'class'      => 'yii\grid\ActionColumn',
-            'template'   => '{update} {edit}',
-            'options'    => ['width' => '10%'],
-            'header'     => 'Действия',
-            'buttons'    => [
-                'edit' => function ($url, $model, $key) {
+            'class'          => 'yii\grid\ActionColumn',
+            'template'       => '{update} {edit} {download}',
+            'options'        => ['width' => '10%'],
+            'header'         => 'Действия',
+            'buttons'        => [
+                'edit'     => function ($url, $model, $key) {
                     return Html::a(Html::tag('span', '', [
                         'class' => 'glyphicon glyphicon-wrench',
                     ]), $url, [
@@ -45,16 +51,32 @@ function urlCreator($action, $model, $key, $index, \yii\grid\ActionColumn $colum
                         'data-pjax'  => '0',
                     ]);
                 },
-                'update' => function($url) {
+                'update'   => function ($url) {
                     return Html::a(Html::tag('span', '', [
                         'class' => 'glyphicon glyphicon-pencil',
                     ]), $url, [
-                        'title'      => 'Редактировать',
-                        'aria-label' => 'Редактировать',
+                        'title'      => 'Редактировать значения переменных',
+                        'aria-label' => 'Редактировать значения переменных',
                         'data-pjax'  => '0',
                     ]);
 
-                }
+                },
+                'download' => function ($url, $model, $key) {
+                    return Html::a(Html::tag('span', '', [
+                        'class' => 'glyphicon glyphicon-download-alt',
+                    ]), $url, [
+                        'title'      => 'Загрузить документ',
+                        'aria-label' => 'Загрузить документ',
+                        'data-pjax'  => '0',
+                    ]);
+                },
+            ],
+            'visibleButtons' => [
+                'update'   => true,
+                'edit'     => true,
+                'download' => function ($model) {
+                    return $model->hasDocument();
+                },
             ],
         ],
     ],
