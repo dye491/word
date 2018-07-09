@@ -2,9 +2,13 @@
 
 namespace app\models;
 
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\TemplateProcessor;
 use Yii;
 use yii\helpers\Json;
+use yii\httpclient\Client;
 use yii\web\UploadedFile;
 use yii\db\ActiveRecord;
 
@@ -44,9 +48,10 @@ class Template extends ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'file_name', 'form_class', 'vars'], 'string', 'max' => 255],
-            [['templateFile'], 'file', 'extensions' => ['docx'], 'maxSize' => 2000000,
-                                       'checkExtensionByMimeType'=>false],
+            [['name', 'file_name', 'form_class'], 'string', 'max' => 255],
+            [['vars'], 'string', 'max' => 2000],
+            [['templateFile'], 'file', 'extensions'               => ['docx'], 'maxSize' => 2000000,
+                                       'checkExtensionByMimeType' => false],
         ];
     }
 
@@ -133,6 +138,9 @@ class Template extends ActiveRecord
             : false;
     }
 
+    /**
+     * @return bool|string
+     */
     public function getDocumentPath()
     {
         return $this->file_name ?
@@ -142,15 +150,35 @@ class Template extends ActiveRecord
     }
 
     /**
+     * @return bool|string
+     */
+    public function getPdfPath()
+    {
+        return $this->file_name ?
+            Yii::getAlias(self::OUTPUT_DIR) . DIRECTORY_SEPARATOR . basename($this->file_name, '.docx') . '.pdf'
+            : false;
+    }
+
+    /**
      * @return bool
      */
     public function hasDocument()
     {
-        if (!($path = $this->getDocumentPath())) {
+        if (!($path = $this->getDocumentPath()))
             return false;
-        }
 
         return file_exists($path) && is_file($path) && pathinfo($path, PATHINFO_EXTENSION) === 'docx';
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasPdf()
+    {
+        if (!($path = $this->getPdfPath()))
+            return false;
+
+        return file_exists($path) && is_file($path) && pathinfo($path, PATHINFO_EXTENSION) === 'pdf';
     }
 
     /**
@@ -188,5 +216,60 @@ class Template extends ActiveRecord
 
         $templateProcessor->saveAs($this->getDocumentPath());
         return true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function makePdf()
+    {
+        $path = Yii::getAlias('@app/vendor/dompdf/dompdf');
+        Settings::setPdfRendererPath($path);
+        Settings::setPdfRendererName('DomPDF');
+        Settings::setDefaultFontName('DejaVu Serif');
+        $writers = [
+            'Word2007' => 'docx',
+            'HTML'     => 'html',
+            'PDF'      => 'pdf',
+        ];
+
+        if (!$this->hasDocument())
+            return false;
+
+        $fileName = $this->getDocumentPath();
+        $temp = IOFactory::load($fileName);
+        $xmlWriter = IOFactory::createWriter($temp, 'PDF');
+        $fileName = Yii::getAlias(self::OUTPUT_DIR . DIRECTORY_SEPARATOR .
+            basename($this->file_name, '.docx') . '.pdf');
+        $xmlWriter->save($fileName);
+
+        return true;
+    }
+
+    public function makePdfByApi()
+    {
+        $client = new Client();
+
+        $request = $client->createRequest()
+            ->setMethod('POST')
+            ->setUrl('https://v2.convertapi.com/docx/to/pdf?Secret=qa3l5VtuaBQ6BNTj')
+            ->addFile('File', $this->getDocumentPath());;
+
+        $response = $request->send();
+        Yii::error(print_r([
+            'headers' => $response->getHeaders(),
+            'format'  => $response->getFormat(),
+            'parser'  => $response->client->getParser($response->getFormat()),
+            'data'    => $response->client->getParser($response->getFormat())->parse($response),
+            'content' => $response->getContent()], true));
+
+        if ($response->isOk) {
+            $content = base64_decode($response->getData()['Files'][0]['FileData']);
+            $result = file_put_contents($this->getPdfPath(), $content);
+//            Yii::info('filesize: ' . $result);
+            return ($result !== false);
+        }
+
+        return false;
     }
 }

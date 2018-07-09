@@ -46,11 +46,11 @@ class Variable extends \yii\db\ActiveRecord
     {
         return [
             'id'          => 'ID',
-            'name'        => 'Name',
-            'label'       => 'Label',
+            'name'        => 'Имя переменной',
+            'label'       => 'Подпись',
             'template_id' => 'Template ID',
-            'group'       => 'Group',
-            'type'        => 'Type',
+            'group'       => 'Группа',
+            'type'        => 'Тип',
         ];
     }
 

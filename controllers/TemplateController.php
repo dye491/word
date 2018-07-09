@@ -65,10 +65,13 @@ class TemplateController extends Controller
             $model->vars = Json::encode($postParams);
             if ($model->save()) {
                 $model->makeDocument();
+//                $model->makePdf();
+                $model->makePdfByApi();
                 return $this->redirect('/template');
             }
         }
 
+//        \Yii::error($model->errors);
         return $this->render('update', [
             'model' => $model,
             'vars'  => $vars,
@@ -125,8 +128,17 @@ class TemplateController extends Controller
         return false;
     }
 
-    private
-    static function findModel($id)
+    public function actionDownloadPdf($id)
+    {
+        $model = self::findModel($id);
+        if ($model && $model->hasPdf()) {
+            return \Yii::$app->response->sendFile($model->getPdfPath());
+        }
+
+        return false;
+    }
+
+    private static function findModel($id)
     {
         return Template::findOne(['id' => $id]);
     }

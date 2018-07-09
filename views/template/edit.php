@@ -13,6 +13,9 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <h1><?= Html::encode($this->title) ?></h1>
 <h3>Переменные шаблона</h3>
+<p>
+    <?= Html::a('Добавить', ['variable/create', 'template_id' => $model->id], ['class' => 'btn btn-primary']) ?>
+</p>
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
     'columns'      => [
@@ -22,10 +25,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'name',
         'label',
         'group',
-        'type',
         [
-            'class' => \yii\grid\ActionColumn::class,
-
+            'attribute' => 'type',
+            'value'     => function ($item) {
+                return $item->type === 'string' ? 'строка' : $item;
+            },
+        ],
+        [
+            'class'      => \yii\grid\ActionColumn::class,
+            'controller' => 'variable',
+            'template'   => '{update} {delete}',
+            'header'     => 'Действия',
+            'options'    => ['width' => '10%'],
         ],
     ],
 ]) ?>

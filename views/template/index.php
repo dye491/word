@@ -38,7 +38,7 @@ function urlCreator($action, $model, $key, $index, \yii\grid\ActionColumn $colum
         'name',
         [
             'class'          => 'yii\grid\ActionColumn',
-            'template'       => '{update} {edit} {download}',
+            'template'       => '{update} {edit} {download} {download-pdf}',
             'options'        => ['width' => '10%'],
             'header'         => 'Действия',
             'buttons'        => [
@@ -65,8 +65,17 @@ function urlCreator($action, $model, $key, $index, \yii\grid\ActionColumn $colum
                     return Html::a(Html::tag('span', '', [
                         'class' => 'glyphicon glyphicon-download-alt',
                     ]), $url, [
-                        'title'      => 'Загрузить документ',
-                        'aria-label' => 'Загрузить документ',
+                        'title'      => 'Загрузить документ (.docx)',
+                        'aria-label' => 'Загрузить документ (.docx)' ,
+                        'data-pjax'  => '0',
+                    ]);
+                },
+                'download-pdf'      => function ($url) {
+                    return Html::a(Html::tag('span', '', [
+                        'class' => 'glyphicon glyphicon-text-color',
+                    ]), $url, [
+                        'title'      => 'Загрузить документ (.pdf)',
+                        'aria-label' => 'Загрузить документ (.pdf)',
                         'data-pjax'  => '0',
                     ]);
                 },
@@ -76,6 +85,9 @@ function urlCreator($action, $model, $key, $index, \yii\grid\ActionColumn $colum
                 'edit'     => true,
                 'download' => function ($model) {
                     return $model->hasDocument();
+                },
+                'download-pdf'      => function ($model) {
+                    return $model->hasPdf();
                 },
             ],
         ],
