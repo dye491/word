@@ -22,6 +22,7 @@ use yii\db\ActiveRecord;
  * @property string $vars
  *
  * @property Variable[] $variables
+ * @property TemplateVar[] $templateVars
  */
 class Template extends ActiveRecord
 {
@@ -50,8 +51,8 @@ class Template extends ActiveRecord
         return [
             [['name', 'file_name', 'form_class'], 'string', 'max' => 255],
             [['vars'], 'string', 'max' => 2000],
-            [['templateFile'], 'file', 'extensions'               => ['docx'], 'maxSize' => 2000000,
-                                       'checkExtensionByMimeType' => false],
+            [['templateFile'], 'file', 'extensions' => ['docx'], 'maxSize' => 2000000,
+                'checkExtensionByMimeType' => false],
         ];
     }
 
@@ -61,12 +62,20 @@ class Template extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id'         => 'ID',
-            'name'       => 'Название',
-            'file_name'  => 'Файл шаблона',
+            'id' => 'ID',
+            'name' => 'Название',
+            'file_name' => 'Файл шаблона',
             'form_class' => 'Form Class',
-            'vars'       => 'Vars',
+            'vars' => 'Vars',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTemplateVars()
+    {
+        return $this->hasMany(TemplateVar::className(), ['template_id' => 'id']);
     }
 
     /**
@@ -74,7 +83,7 @@ class Template extends ActiveRecord
      */
     public function getVariables()
     {
-        return $this->hasMany(Variable::class, ['template_id' => 'id']);
+        return $this->hasMany(Variable::class, ['id' => 'var_id'])->viaTable('template_var', ['template_id' => 'id']);
     }
 
     /**
@@ -229,8 +238,8 @@ class Template extends ActiveRecord
         Settings::setDefaultFontName('DejaVu Serif');
         $writers = [
             'Word2007' => 'docx',
-            'HTML'     => 'html',
-            'PDF'      => 'pdf',
+            'HTML' => 'html',
+            'PDF' => 'pdf',
         ];
 
         if (!$this->hasDocument())
@@ -258,9 +267,9 @@ class Template extends ActiveRecord
         $response = $request->send();
         Yii::error(print_r([
             'headers' => $response->getHeaders(),
-            'format'  => $response->getFormat(),
-            'parser'  => $response->client->getParser($response->getFormat()),
-            'data'    => $response->client->getParser($response->getFormat())->parse($response),
+            'format' => $response->getFormat(),
+            'parser' => $response->client->getParser($response->getFormat()),
+            'data' => $response->client->getParser($response->getFormat())->parse($response),
             'content' => $response->getContent()], true));
 
         if ($response->isOk) {

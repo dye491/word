@@ -14,7 +14,8 @@ use Yii;
  * @property string $group
  * @property string $type
  *
- * @property Template $template
+ * @property TemplateVar[] $templateVars
+ * @property Template[] $templates
  */
 class Variable extends \yii\db\ActiveRecord
 {
@@ -45,12 +46,12 @@ class Variable extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id'          => 'ID',
-            'name'        => 'Имя переменной',
-            'label'       => 'Подпись',
+            'id' => 'ID',
+            'name' => 'Имя переменной',
+            'label' => 'Подпись',
             'template_id' => 'Template ID',
-            'group'       => 'Группа',
-            'type'        => 'Тип',
+            'group' => 'Группа',
+            'type' => 'Тип',
         ];
     }
 
@@ -65,5 +66,22 @@ class Variable extends \yii\db\ActiveRecord
     public static function getByName($name)
     {
         return self::findOne(['name' => $name]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTemplateVars()
+    {
+        return $this->hasMany(TemplateVar::className(), ['var_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTemplates()
+    {
+        return $this->hasMany(Template::class, ['id' => 'template_id'])
+            ->viaTable('template_var', ['var_id' => 'id']);
     }
 }
