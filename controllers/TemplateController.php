@@ -74,7 +74,7 @@ class TemplateController extends Controller
 //        \Yii::error($model->errors);
         return $this->render('update', [
             'model' => $model,
-            'vars'  => $vars,
+            'vars' => $vars,
         ]);
     }
 
@@ -82,7 +82,7 @@ class TemplateController extends Controller
     {
         $model = self::findModel($id);
         $dataProvider = new ActiveDataProvider([
-            'query' => $model->getVariables(),
+            'query' => $model->getTemplateVars(),
         ]);
 
         if ($model->load(\Yii::$app->request->post()) /*&& $model->validate()*/) {
@@ -102,7 +102,7 @@ class TemplateController extends Controller
         }
 
         return $this->render('edit', [
-            'model'        => $model,
+            'model' => $model,
             'dataProvider' => $dataProvider,
         ]);
     }
