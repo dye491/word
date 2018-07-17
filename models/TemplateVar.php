@@ -34,7 +34,7 @@ class TemplateVar extends \yii\db\ActiveRecord
         return [
             [['var_id', 'template_id'], 'required'],
             [['var_id', 'template_id', 'required'], 'integer'],
-            [['start_date', 'end_date'], 'safe'],
+            [['start_date', 'end_date'], 'date', 'format' => 'php:d.m.Y'],
             [['var_id', 'template_id'], 'unique', 'targetAttribute' => ['var_id', 'template_id']],
             [['template_id'], 'exist', 'skipOnError' => true, 'targetClass' => Template::className(), 'targetAttribute' => ['template_id' => 'id']],
             [['var_id'], 'exist', 'skipOnError' => true, 'targetClass' => Variable::className(), 'targetAttribute' => ['var_id' => 'id']],
@@ -48,10 +48,10 @@ class TemplateVar extends \yii\db\ActiveRecord
     {
         return [
             'var_id' => 'Var ID',
-            'template_id' => 'Template ID',
-            'required' => 'Required',
-            'start_date' => 'Start Date',
-            'end_date' => 'End Date',
+            'template_id' => 'ID шаблона',
+            'required' => 'Обязательное поле',
+            'start_date' => 'Дата начала действия',
+            'end_date' => 'Дата окончания действия',
         ];
     }
 
@@ -69,5 +69,20 @@ class TemplateVar extends \yii\db\ActiveRecord
     public function getVar()
     {
         return $this->hasOne(Variable::className(), ['id' => 'var_id']);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeSave($insert)
+    {
+        if ($this->dirtyAttributes['start_date']) {
+            $this->start_date = Yii::$app->formatter->asDate($this->start_date, 'php:Y-m-d');
+        }
+        if ($this->dirtyAttributes['end_date']) {
+            $this->end_date = Yii::$app->formatter->asDate($this->end_date, 'php:Y-m-d');
+        }
+
+        return parent::beforeSave($insert);
     }
 }
