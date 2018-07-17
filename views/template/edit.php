@@ -14,29 +14,46 @@ $this->params['breadcrumbs'][] = $this->title;
 <h1><?= Html::encode($this->title) ?></h1>
 <h3>Переменные шаблона</h3>
 <p>
-    <?= Html::a('Добавить', ['variable/create', 'template_id' => $model->id], ['class' => 'btn btn-primary']) ?>
+    <?= Html::a('Добавить', ['template-var/create', 'template_id' => $model->id], ['class' => 'btn btn-primary']) ?>
 </p>
 <?= GridView::widget([
     'dataProvider' => $dataProvider,
-    'columns'      => [
+    'columns' => [
         [
             'class' => \yii\grid\SerialColumn::class,
         ],
-        'name',
-        'label',
-        'group',
+        'var.name',
+        'var.label',
+        'var.group',
         [
-            'attribute' => 'type',
-            'value'     => function ($item) {
-                return $item->type === 'string' ? 'строка' : $item;
+            'attribute' => 'start_date',
+            'value' => function ($model) {
+                return $model->start_date ?
+                    Yii::$app->formatter->asDate($model->start_date, 'php:d.m.Y') :
+                    $model->start_date;
             },
         ],
         [
-            'class'      => \yii\grid\ActionColumn::class,
-            'controller' => 'variable',
-            'template'   => '{update} {delete}',
-            'header'     => 'Действия',
-            'options'    => ['width' => '10%'],
+            'attribute' => 'end_date',
+            'value' => function ($model) {
+                return $model->end_date ?
+                    Yii::$app->formatter->asDate($model->end_date, 'php:d.m.Y') :
+                    $model->end_date;
+            },
+        ],
+        [
+            'attribute' => 'type',
+            'label' => 'Тип',
+            'value' => function ($model) {
+                return $model->var->type === 'string' ? 'строка' : $model;
+            },
+        ],
+        [
+            'class' => \yii\grid\ActionColumn::class,
+            'controller' => 'template-var',
+            'template' => '{update} {delete}',
+            'header' => 'Действия',
+            'options' => ['width' => '10%'],
         ],
     ],
 ]) ?>
