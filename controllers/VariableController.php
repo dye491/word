@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\VariableSearch;
 use Yii;
 use app\models\Template;
 use app\models\Variable;
@@ -21,12 +22,40 @@ class VariableController extends Controller
     {
         return [
             'verbs' => [
-                'class'   => VerbFilter::class,
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
             ],
         ];
+    }
+
+    /**
+     * Lists all Variable models.
+     * @return mixed
+     */
+    public function actionIndex()
+    {
+        $searchModel = new VariableSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('index', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays a single Variable model.
+     * @param integer $id
+     * @return mixed
+     * @throws NotFoundHttpException if the model cannot be found
+     */
+    public function actionView($id)
+    {
+        return $this->render('view', [
+            'model' => $this->findModel($id),
+        ]);
     }
 
     /**
@@ -47,7 +76,7 @@ class VariableController extends Controller
         }
 
         return $this->render('create', [
-            'model'    => $model,
+            'model' => $model,
             'template' => $template,
         ]);
     }
@@ -69,7 +98,7 @@ class VariableController extends Controller
         }
 
         return $this->render('update', [
-            'model'    => $model,
+            'model' => $model,
             'template' => $template,
         ]);
     }
