@@ -29,7 +29,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'label')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'group')->textInput(['maxlength' => true]) ?>
+<!--    --><?//= $form->field($model, 'group')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'type')->dropDownList(['string' => 'строка', 'number' => 'число']) ?>
 

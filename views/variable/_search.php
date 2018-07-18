@@ -19,13 +19,9 @@ use yii\widgets\ActiveForm;
         ],
     ]); ?>
 
-    <!--    --><? //= $form->field($model, 'id') ?>
-
     <?= $form->field($model, 'name') ?>
 
     <?= $form->field($model, 'label') ?>
-
-    <!--    --><? //= $form->field($model, 'template_id') ?>
 
     <?= $form->field($model, 'group') ?>
 
