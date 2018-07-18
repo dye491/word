@@ -11,6 +11,8 @@ use Yii;
  * @property string $name
  *
  * @property Company[] $companies
+ * @property ProfileTemplate[] $profileTemplates
+ * @property Template[] $templates
  */
 class Profile extends \yii\db\ActiveRecord
 {
@@ -48,6 +50,22 @@ class Profile extends \yii\db\ActiveRecord
      */
     public function getCompanies()
     {
-        return $this->hasMany(Company::className(), ['profile_id' => 'id']);
+        return $this->hasMany(Company::class, ['profile_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProfileTemplates()
+    {
+        return $this->hasMany(ProfileTemplate::class, ['profile_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTemplates()
+    {
+        return $this->hasMany(Template::class, ['id' => 'template_id'])->viaTable('profile_template', ['profile_id' => 'id']);
     }
 }

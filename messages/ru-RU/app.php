@@ -13,4 +13,7 @@ return [
     "Update Profile: " => "Изменить профиль: ",
     'Delete' => 'Удалить',
     'Are you sure you want to delete this item?' => 'Вы действительно хотите удалить эту запись?',
+    'Start Date' => 'Дата начала',
+    'End Date' => 'Дата окончания',
+    'Is Active' => 'Активен',
 ];

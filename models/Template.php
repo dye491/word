@@ -20,9 +20,14 @@ use yii\db\ActiveRecord;
  * @property string $file_name
  * @property string $form_class
  * @property string $vars
+ * @property string $start_date
+ * @property string $end_date
+ * @property int $is_active
  *
- * @property Variable[] $variables
  * @property TemplateVar[] $templateVars
+ * @property Variable[] $variables
+ * @property ProfileTemplate[] $profileTemplates
+ * @property Profile[] $profiles
  */
 class Template extends ActiveRecord
 {
@@ -49,6 +54,8 @@ class Template extends ActiveRecord
     public function rules()
     {
         return [
+            [['start_date', 'end_date'], 'safe'],
+            [['is_active'], 'integer'],
             [['name', 'file_name', 'form_class'], 'string', 'max' => 255],
             [['vars'], 'string', 'max' => 2000],
             [['templateFile'], 'file', 'extensions' => ['docx'], 'maxSize' => 2000000,
@@ -67,6 +74,9 @@ class Template extends ActiveRecord
             'file_name' => 'Файл шаблона',
             'form_class' => 'Form Class',
             'vars' => 'Vars',
+            'start_date' => Yii::t('app', 'Start Date'),
+            'end_date' => Yii::t('app', 'End Date'),
+            'is_active' => Yii::t('app', 'Is Active'),
         ];
     }
 
@@ -75,7 +85,7 @@ class Template extends ActiveRecord
      */
     public function getTemplateVars()
     {
-        return $this->hasMany(TemplateVar::className(), ['template_id' => 'id']);
+        return $this->hasMany(TemplateVar::class, ['template_id' => 'id']);
     }
 
     /**
@@ -85,6 +95,23 @@ class Template extends ActiveRecord
     {
         return $this->hasMany(Variable::class, ['id' => 'var_id'])->viaTable('template_var', ['template_id' => 'id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProfileTemplates()
+    {
+        return $this->hasMany(ProfileTemplate::class, ['template_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProfiles()
+    {
+        return $this->hasMany(Profile::class, ['id' => 'profile_id'])->viaTable('profile_template', ['template_id' => 'id']);
+    }
+
 
     /**
      * @return mixed
