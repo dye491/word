@@ -17,10 +17,10 @@ use yii\widgets\ActiveForm;
         ],
         'fieldConfig' => [
             'labelOptions' => [
-                'class' => 'control-label col-sm-2 col-xs-12',
+//                'class' => 'control-label col-sm-2 col-xs-12',
             ],
             'inputOptions' => [
-                'class' => 'col-sm-10 col-xs-12',
+                'class' => 'col-sm-10 col-xs-12 form-control',
             ],
         ],
     ]); ?>

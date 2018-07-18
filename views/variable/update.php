@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $model app\models\Variable */
 
 $this->title = "Изменить переменную \"{$model->name}\"";
-$this->params['breadcrumbs'][] = ['label' => "Список переменных", 'url' => ['variable']];
+$this->params['breadcrumbs'][] = ['label' => "Список переменных", 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="variable-update">
