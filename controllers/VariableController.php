@@ -4,7 +4,6 @@ namespace app\controllers;
 
 use app\models\VariableSearch;
 use Yii;
-use app\models\Template;
 use app\models\Variable;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -62,22 +61,18 @@ class VariableController extends Controller
      * Creates a new Variable model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      *
-     * @param $template_id integer
      * @return mixed
      */
-    public function actionCreate($template_id)
+    public function actionCreate(/*$template_id*/)
     {
         $model = new Variable();
-        $model->template_id = $template_id;
-        $template = Template::findOne(['id' => $template_id]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['template/edit', 'id' => $template_id]);
+            return $this->redirect('index');
         }
 
         return $this->render('create', [
             'model' => $model,
-            'template' => $template,
         ]);
     }
 
@@ -91,15 +86,15 @@ class VariableController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $template = Template::findOne(['id' => $model->template_id]);
+//        $template = Template::findOne(['id' => $model->template_id]);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['template/edit', 'id' => $template->id]);
+            return $this->redirect(['index']);
         }
 
         return $this->render('update', [
             'model' => $model,
-            'template' => $template,
+//            'template' => $template,
         ]);
     }
 
@@ -113,10 +108,10 @@ class VariableController extends Controller
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $template = Template::findOne(['id' => $model->template_id]);
+//        $template = Template::findOne(['id' => $model->template_id]);
         $model->delete();
 
-        return $this->redirect(['template/edit', 'id' => $template->id]);
+        return $this->redirect(['index']);
     }
 
     /**

@@ -12,7 +12,7 @@ use yii\widgets\ActiveForm;
 <div class="variable-form">
 
     <?php $form = ActiveForm::begin([
-        'options'     => [
+        'options' => [
             'class' => 'form-horizontal',
         ],
         'fieldConfig' => [
@@ -35,9 +35,7 @@ use yii\widgets\ActiveForm;
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Отменить', ['template/edit', 'id' => $template->id], [
-            'class' => 'btn btn-default',
-        ]) ?>
+        <?= Html::a('Отменить', ['index'], ['class' => 'btn btn-default']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
