@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
     <?php Pjax::begin(); ?>
-<!--    --><?php //echo $this->render('_search', ['model' => $searchModel]); ?>
+    <!--    --><?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
         <?= Html::a('Новая переменная ', ['create'], ['class' => 'btn btn-success']) ?>
@@ -30,11 +30,29 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'label',
 //            'group',
-            'type',
+            [
+
+                'attribute' => 'type',
+                'value' => function ($model) {
+                    switch ($model->type) {
+                        case 'string':
+                            return 'Строка';
+                        case 'number':
+                            return 'Число';
+                        default:
+                            return null;
+                    }
+                },
+                'filter' => [
+                    'string' => 'Строка',
+                    'number' => 'Число',
+                ],
+            ],
 
             [
                 'class' => 'yii\grid\ActionColumn',
                 'template' => '{update} {delete}',
+                'header' => 'Действия',
             ],
         ],
     ]); ?>

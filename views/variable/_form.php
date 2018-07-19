@@ -31,7 +31,7 @@ use yii\widgets\ActiveForm;
 
 <!--    --><?//= $form->field($model, 'group')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'type')->dropDownList(['string' => 'строка', 'number' => 'число']) ?>
+    <?= $form->field($model, 'type')->dropDownList(['string' => 'Строка', 'number' => 'Число']) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
