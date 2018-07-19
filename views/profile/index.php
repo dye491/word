@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="profile-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-    <?php Pjax::begin(); ?>
+    <!--    --><?php //Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
@@ -25,19 +25,33 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
 //        'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            [
+                'class' => 'yii\grid\SerialColumn',
+                'options' => [
+                    'width' => '5%',
+                ],
+            ],
 
 //            'id',
             'name',
+            [
+                'label' => 'Кол-во шаблонов',
+                'content' => function ($model) {
+                    /* @var $model \app\models\Profile */
+                    return Html::a($model->getProfileTemplates()->count(), ['/profile/view', 'id' => $model->id]);
+                },
+                'options' => ['width' => '15%'],
+            ],
 
             [
                 'class' => 'yii\grid\ActionColumn',
                 'options' => [
                     'width' => '10%',
                 ],
-                'header' => 'Действия',
+//                'header' => Yii::t('app', 'Delete'),
+                'template' => '{delete}',
             ],
         ],
     ]); ?>
-    <?php Pjax::end(); ?>
+    <!--    --><?php //Pjax::end(); ?>
 </div>

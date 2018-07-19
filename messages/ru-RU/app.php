@@ -7,7 +7,9 @@
  */
 return [
     'Create Profile' => 'Новый профиль',
+    'Add Template' => 'Добавить шаблон',
     'Profiles' => 'Профили',
+    'Cancel' => 'Отмена',
     'Save' => 'Сохранить',
     'Update' => 'Изменить',
     "Update Profile: " => "Изменить профиль: ",
