@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
         'action' => ['index'],
         'method' => 'get',
         'options' => [
-            'data-pjax' => 1
+            'data-pjax' => 1,
         ],
     ]); ?>
 
@@ -24,7 +24,11 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'employee_count') ?>
 
-    <?= $form->field($model, 'org_form') ?>
+    <?= $form->field($model, 'org_form')->dropDownList([
+        '' => null,
+        'ip' => 'ИП',
+        'ooo' => 'ООО',
+    ]) ?>
 
     <?= $form->field($model, 'profile_id') ?>
 
