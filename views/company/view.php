@@ -2,9 +2,12 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\grid\GridView;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Company */
+/* @var $dataProvider \yii\data\ActiveDataProvider */
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Организации', 'url' => ['index']];
@@ -26,10 +29,11 @@ $this->params['breadcrumbs'][] = $this->title;
     </p>
 
     <?= DetailView::widget([
+        'options' => ['class'=>'table detail-view'],
         'model' => $model,
         'attributes' => [
-            'id',
-            'name',
+//            'id',
+//            'name',
             'employee_count',
             [
                 'attribute' => 'org_form',
@@ -53,4 +57,23 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]) ?>
 
+    <h2>Шаблоны</h2>
+    <?php Pjax::begin() ?>
+    <!--<p>
+        <? /*= Html::a(Yii::t('app', 'Create Profile Template'),
+            ['/profile-template/create', 'profile_id' => $model->profile_id],
+            ['class' => 'btn btn-success']) */ ?>
+    </p>-->
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            [
+                'class' => 'yii\grid\SerialColumn',
+                'header' => '№',
+                'options' => ['width' => '5%'],
+            ],
+            'name',
+        ],
+    ]) ?>
+    <?php Pjax::end() ?>
 </div>

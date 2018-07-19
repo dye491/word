@@ -59,4 +59,11 @@ class Company extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Profile::className(), ['id' => 'profile_id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTemplates() {
+        return $this->profile->getTemplates();
+    }
 }
