@@ -21,44 +21,43 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Добавить', ['create'], ['class' => 'btn btn-success pull-right']) ?>
     </div>
 
-    <div class="box-body">
-        <?= GridView::widget([
-            'dataProvider' => $dataProvider,
-            'filterModel' => $searchModel,
-            'columns' => [
-                ['class' => 'yii\grid\SerialColumn'],
+    <?= GridView::widget([
+        'layout' => '<div class="box-body no-padding table-responsive">{items}</div><div class="box-footer">{pager}</div>',
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
 
-                'name',
-                'employee_count',
-                [
-                    'attribute' => 'org_form',
-                    'value' => function ($model) {
-                        switch ($model->org_form) {
-                            case 'ooo':
-                                return 'ООО';
-                            case 'ip':
-                                return 'ИП';
-                            default:
-                                return null;
-                        }
+            'name',
+            'employee_count',
+            [
+                'attribute' => 'org_form',
+                'value' => function ($model) {
+                    switch ($model->org_form) {
+                        case 'ooo':
+                            return 'ООО';
+                        case 'ip':
+                            return 'ИП';
+                        default:
+                            return null;
+                    }
 
-                    },
-                    'filter' => [
-                        'ip' => 'ИП',
-                        'ooo' => 'ООО',
-                    ],
+                },
+                'filter' => [
+                    'ip' => 'ИП',
+                    'ooo' => 'ООО',
                 ],
-                [
-                    'attribute' => 'profile_id',
-                    'value' => function ($model) {
-                        return $model->profile ? $model->profile->name : null;
-                    },
-                    'filter' => ArrayHelper::map(\app\models\Profile::find()->asArray()->all(), 'id', 'name'),
-                ],
-
-                ['class' => 'yii\grid\ActionColumn'],
             ],
-        ]); ?>
-    </div>
+            [
+                'attribute' => 'profile_id',
+                'value' => function ($model) {
+                    return $model->profile ? $model->profile->name : null;
+                },
+                'filter' => ArrayHelper::map(\app\models\Profile::find()->asArray()->all(), 'id', 'name'),
+            ],
+
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
     <?php Pjax::end(); ?>
 </div>
