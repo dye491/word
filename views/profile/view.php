@@ -44,6 +44,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'btn btn-success pull-right']) ?>
     </div>
     <?= GridView::widget([
+        'layout' => '<div class="box-body no-padding table-responsive">{items}</div><div class="box-footer">{pager}</div>',
         'dataProvider' => $dataProvider,
         'columns' => [
             [
