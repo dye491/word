@@ -12,52 +12,53 @@ use yii\helpers\ArrayHelper;
 $this->title = 'Организации';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="company-index">
+<div class="box">
 
-    <h1><?= Html::encode($this->title) ?></h1>
     <?php Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p>
-        <?= Html::a('Добавить', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <div class="box-header">
+        <?= Html::a('Добавить', ['create'], ['class' => 'btn btn-success pull-right']) ?>
+    </div>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+    <div class="box-body">
+        <?= GridView::widget([
+            'dataProvider' => $dataProvider,
+            'filterModel' => $searchModel,
+            'columns' => [
+                ['class' => 'yii\grid\SerialColumn'],
 
-            'name',
-            'employee_count',
-            [
-                'attribute' => 'org_form',
-                'value' => function ($model) {
-                    switch ($model->org_form) {
-                        case 'ooo':
-                            return 'ООО';
-                        case 'ip':
-                            return 'ИП';
-                        default:
-                            return null;
-                    }
+                'name',
+                'employee_count',
+                [
+                    'attribute' => 'org_form',
+                    'value' => function ($model) {
+                        switch ($model->org_form) {
+                            case 'ooo':
+                                return 'ООО';
+                            case 'ip':
+                                return 'ИП';
+                            default:
+                                return null;
+                        }
 
-                },
-                'filter' => [
-                    'ip' => 'ИП',
-                    'ooo' => 'ООО',
+                    },
+                    'filter' => [
+                        'ip' => 'ИП',
+                        'ooo' => 'ООО',
+                    ],
                 ],
-            ],
-            [
-                'attribute' => 'profile_id',
-                'value' => function ($model) {
-                    return $model->profile ? $model->profile->name : null;
-                },
-                'filter' => ArrayHelper::map(\app\models\Profile::find()->asArray()->all(), 'id', 'name'),
-            ],
+                [
+                    'attribute' => 'profile_id',
+                    'value' => function ($model) {
+                        return $model->profile ? $model->profile->name : null;
+                    },
+                    'filter' => ArrayHelper::map(\app\models\Profile::find()->asArray()->all(), 'id', 'name'),
+                ],
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+                ['class' => 'yii\grid\ActionColumn'],
+            ],
+        ]); ?>
+    </div>
     <?php Pjax::end(); ?>
 </div>

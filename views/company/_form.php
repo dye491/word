@@ -9,7 +9,7 @@ use yii\widgets\ActiveForm;
 /* @var $profiles array */
 ?>
 
-<div class="company-form">
+<div class="box-body">
 
     <?php $form = ActiveForm::begin(); ?>
 
