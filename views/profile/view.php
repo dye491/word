@@ -13,9 +13,8 @@ $this->title = $model->name . ': доступные шаблоны';
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Profiles'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="profile-view">
+<div class="box">
 
-    <h1><?= Html::encode($this->title) ?></h1>
 
     <!--<p>
         <?/*= Html::a(Yii::t('app', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) */?>
@@ -39,11 +38,11 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <!--    <h2>Доступные шаблоны</h2>-->
     <?php Pjax::begin() ?>
-    <p>
+    <div class="box-header">
         <?= Html::a(Yii::t('app', 'Add Template'),
             ['/profile-template/create', 'profile_id' => $model->id],
-            ['class' => 'btn btn-success']) ?>
-    </p>
+            ['class' => 'btn btn-success pull-right']) ?>
+    </div>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
