@@ -10,7 +10,7 @@ use yii\jui\DatePicker;
 /* @var $varList array */
 ?>
 
-<div class="template-var-form">
+<div class="box-body">
 
     <?php $form = ActiveForm::begin(); ?>
 
