@@ -2,7 +2,8 @@
 
 namespace app\models;
 
-use Yii;
+//use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "variable".
@@ -16,8 +17,9 @@ use Yii;
  *
  * @property TemplateVar[] $templateVars
  * @property Template[] $templates
+ * @property VarValue[] $values
  */
-class Variable extends \yii\db\ActiveRecord
+class Variable extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -36,7 +38,7 @@ class Variable extends \yii\db\ActiveRecord
             [['name'], 'required'],
             [['template_id'], 'integer'],
             [['name', 'label', 'group', 'type'], 'string', 'max' => 255],
-            [['template_id'], 'exist', 'skipOnError' => true, 'targetClass' => Template::className(), 'targetAttribute' => ['template_id' => 'id']],
+            [['template_id'], 'exist', 'skipOnError' => true, 'targetClass' => Template::class, 'targetAttribute' => ['template_id' => 'id']],
         ];
     }
 
@@ -60,7 +62,7 @@ class Variable extends \yii\db\ActiveRecord
      */
     public function getTemplate()
     {
-        return $this->hasOne(Template::className(), ['id' => 'template_id']);
+        return $this->hasOne(Template::class, ['id' => 'template_id']);
     }
 
     public static function getByName($name)
@@ -73,7 +75,7 @@ class Variable extends \yii\db\ActiveRecord
      */
     public function getTemplateVars()
     {
-        return $this->hasMany(TemplateVar::className(), ['var_id' => 'id']);
+        return $this->hasMany(TemplateVar::class, ['var_id' => 'id']);
     }
 
     /**
@@ -83,5 +85,30 @@ class Variable extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Template::class, ['id' => 'template_id'])
             ->viaTable('template_var', ['var_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getValues()
+    {
+        return $this->hasMany(VarValue::class, ['var_id' => 'id']);
+    }
+
+    /**
+     * @param $company_id
+     * @param null $date
+     * @return array|null|ActiveRecord
+     */
+    public function getValue($company_id, $date = null)
+    {
+        $date = (new \DateTime($date))->format('Y-m-d');
+
+        return $this->getValues()
+            ->andWhere(['company_id' => $company_id])
+            ->andWhere(['or', ['<=', 'start_date', $date], ['start_date' => null]])
+            ->andWhere(['or', ['>=', 'end_date', $date], ['end_date' => null]])
+            ->orderBy(['start_date' => SORT_DESC])
+            ->one();
     }
 }
