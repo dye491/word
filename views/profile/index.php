@@ -11,17 +11,18 @@ use yii\widgets\Pjax;
 $this->title = Yii::t('app', 'Profiles');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="profile-index">
+<div class="box">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<!--    <h1>--><?//= Html::encode($this->title) ?><!--</h1>-->
     <!--    --><?php //Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p>
-        <?= Html::a(Yii::t('app', 'Create Profile'), ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <div class="box-header">
+        <?= Html::a(Yii::t('app', 'Create Profile'), ['create'], ['class' => 'btn btn-success pull-right']) ?>
+    </div>
 
     <?= GridView::widget([
+        'layout' => '<div class="box-body no-padding table-responsive">{items}</div><div class="box-footer">{pager}</div>',
         'dataProvider' => $dataProvider,
 //        'filterModel' => $searchModel,
         'columns' => [

@@ -9,13 +9,13 @@ use yii\widgets\ActiveForm;
 /* @var $templates array */
 ?>
 
-<div class="profile-template-form">
+<div class="box-body">
 
     <?php $form = ActiveForm::begin(); ?>
 
     <!--    --><? //= $form->field($model, 'profile_id')->textInput() ?>
 
-    <?= $form->field($model, 'template_id')->dropDownList($templates) ?>
+    <?= $form->field($model, 'template_id')->dropDownList($templates)->label('Выберите шаблон') ?>
 
     <div class="form-group">
         <?= Html::submitButton(Yii::t('app', 'Save'), ['class' => 'btn btn-success']) ?>

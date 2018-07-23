@@ -12,17 +12,17 @@ use yii\helpers\ArrayHelper;
 $this->title = 'Организации';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="company-index">
+<div class="box">
 
-    <h1><?= Html::encode($this->title) ?></h1>
     <?php Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p>
-        <?= Html::a('Добавить', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <div class="box-header">
+        <?= Html::a('Добавить', ['create'], ['class' => 'btn btn-success pull-right']) ?>
+    </div>
 
     <?= GridView::widget([
+        'layout' => '<div class="box-body no-padding table-responsive">{items}</div><div class="box-footer">{pager}</div>',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [

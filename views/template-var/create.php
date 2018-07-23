@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = [
 ];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="template-var-create">
+<div class="box template-var-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 

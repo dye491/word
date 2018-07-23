@@ -11,17 +11,17 @@ use yii\widgets\Pjax;
 $this->title = 'Список переменных';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="variable-index">
+<div class="box">
 
-    <h1><?= Html::encode($this->title) ?></h1>
     <?php Pjax::begin(); ?>
     <!--    --><?php //echo $this->render('_search', ['model' => $searchModel]); ?>
 
-    <p>
-        <?= Html::a('Новая переменная ', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <div class="box-header">
+        <?= Html::a('Новая переменная ', ['create'], ['class' => 'btn btn-success pull-right']) ?>
+    </div>
 
     <?= GridView::widget([
+        'layout' => '<div class="box-body no-padding table-responsive">{summary}{items}</div><div class="box-footer">{pager}</div>',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
         'columns' => [

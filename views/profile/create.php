@@ -10,9 +10,7 @@ $this->title = Yii::t('app', 'Create Profile');
 $this->params['breadcrumbs'][] = ['label' => Yii::t('app', 'Profiles'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="profile-create">
-
-    <h1><?= Html::encode($this->title) ?></h1>
+<div class="box">
 
     <?= $this->render('_form', [
         'model' => $model,

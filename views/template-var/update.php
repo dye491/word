@@ -14,9 +14,9 @@ $this->params['breadcrumbs'][] = [
 //$this->params['breadcrumbs'][] = ['label' => $model->var_id, 'url' => ['view', 'var_id' => $model->var_id, 'template_id' => $model->template_id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="template-var-update">
+<div class="box">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+<!--    <h1>--><?//= Html::encode($this->title) ?><!--</h1>-->
 
     <?= $this->render('_form', [
         'model' => $model,

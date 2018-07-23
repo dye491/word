@@ -80,6 +80,7 @@ class SiteController extends Controller
             return $this->goBack();
         }
 
+        $this->layout = 'main-login';
         $model->password = '';
         return $this->render('login', [
             'model' => $model,

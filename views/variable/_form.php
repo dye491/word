@@ -9,21 +9,9 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="variable-form">
+<div class="box-body">
 
-    <?php $form = ActiveForm::begin([
-        'options' => [
-            'class' => 'form-horizontal',
-        ],
-        'fieldConfig' => [
-            'labelOptions' => [
-//                'class' => 'control-label col-sm-2 col-xs-12',
-            ],
-            'inputOptions' => [
-                'class' => 'col-sm-10 col-xs-12 form-control',
-            ],
-        ],
-    ]); ?>
+    <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
