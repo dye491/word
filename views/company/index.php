@@ -56,7 +56,21 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => ArrayHelper::map(\app\models\Profile::find()->asArray()->all(), 'id', 'name'),
             ],
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'headerOptions' => ['style' => ['width' => '10%']],
+                'template' => '{var} {template} {update} {delete}',
+                'buttons' => [
+                    'template' => function ($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-list-alt"></span>', ['template-index', 'id' => $model->id],
+                            ['title' => 'Шаблоны', 'aria-label' => 'Шаблоны', 'data-pjax' => '0']);
+                    },
+                    'var' => function ($url, $model, $key) {
+                        return Html::a('<span class="fa fa-at"></span>', ['var-index', 'id' => $model->id],
+                            ['title' => 'Переменные', 'aria-label' => 'Переменные', 'data-pjax' => '0']);
+                    },
+                ],
+            ],
         ],
     ]); ?>
     <?php Pjax::end(); ?>

@@ -67,6 +67,49 @@ class CompanyController extends Controller
     }
 
     /**
+     * Displays Company Templates
+     * @param $id
+     * @return string
+     */
+    public function actionTemplateIndex($id)
+    {
+        $model = $this->findModel($id);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $model->getTemplates(),
+        ]);
+
+        return $this->render('template-index', [
+            'model' => $model,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * Displays variables tied to one or all Company template(s)
+     * @param $id
+     * @param null $date
+     * @param null $template_id
+     * @return string
+     */
+    public function actionVarIndex($id, $template_id = null, $date = null)
+    {
+        $model = $this->findModel($id);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $model->getVars($template_id),
+        ]);
+
+        return $this->render('var-index', [
+            'model' => $model,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionVarEdit($id, $var_id, $date = null)
+    {
+
+    }
+
+    /**
      * Creates a new Company model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed

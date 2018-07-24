@@ -34,6 +34,7 @@ class VarValue extends ActiveRecord
     public function rules()
     {
         return [
+            [['company_id', 'var_id'], 'required'],
             [['company_id', 'var_id'], 'integer'],
             [['start_date', 'end_date'], 'safe'],
             [['value'], 'string', 'max' => 255],
