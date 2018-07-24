@@ -25,11 +25,17 @@ $this->params['breadcrumbs'][] = $this->title;
         'layout' => '<div class="box-body no-padding table-responsive">{items}</div><div class="box-footer">{pager}</div>',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'filterPosition' => GridView::FILTER_POS_HEADER,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'name',
-            'employee_count',
+            [
+                'attribute' => 'name',
+                'headerOptions' => ['style' => 'min-width: 33%;'],
+            ],
+            [
+                'attribute' => 'employee_count',
+//                'headerOptions' => ['style' => 'width: 5%;'],
+            ],
             [
                 'attribute' => 'org_form',
                 'value' => function ($model) {
@@ -54,6 +60,14 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->profile ? $model->profile->name : null;
                 },
                 'filter' => ArrayHelper::map(\app\models\Profile::find()->asArray()->all(), 'id', 'name'),
+            ],
+            [
+                'label' => 'Заполнение',
+                'content' => function ($model) {
+                    return ($varCount = $model->getVarsCount()) ?
+                        '<span class="badge">' . ($model->getVarValuesCount() * 100 / $varCount) . ' %</span>' :
+                        null;
+                },
             ],
 
             [

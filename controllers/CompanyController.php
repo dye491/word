@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\Profile;
+use app\models\Template;
 use Yii;
 use app\models\Company;
 use app\models\CompanySearch;
@@ -73,6 +74,7 @@ class CompanyController extends Controller
      */
     public function actionTemplateIndex($id)
     {
+        Yii::$app->user->setReturnUrl(Yii::$app->request->url);
         $model = $this->findModel($id);
         $dataProvider = new ActiveDataProvider([
             'query' => $model->getTemplates(),
@@ -93,20 +95,21 @@ class CompanyController extends Controller
      */
     public function actionVarIndex($id, $template_id = null, $date = null)
     {
+        Yii::$app->user->setReturnUrl(Yii::$app->request->url);
         $model = $this->findModel($id);
+        if ($template_id) {
+            $template = Template::findOne(['id' => $template_id]);
+        }
         $dataProvider = new ActiveDataProvider([
             'query' => $model->getVars($template_id),
+            'sort' => false,
         ]);
 
         return $this->render('var-index', [
             'model' => $model,
             'dataProvider' => $dataProvider,
+            'template' => isset($template) ? $template : null,
         ]);
-    }
-
-    public function actionVarEdit($id, $var_id, $date = null)
-    {
-
     }
 
     /**

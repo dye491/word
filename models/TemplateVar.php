@@ -49,7 +49,7 @@ class TemplateVar extends \yii\db\ActiveRecord
         return [
             'var_id' => 'Var ID',
             'template_id' => 'ID шаблона',
-            'required' => 'Обязательное поле',
+            'required' => 'Обязательна',
             'start_date' => 'Дата начала действия',
             'end_date' => 'Дата окончания действия',
         ];

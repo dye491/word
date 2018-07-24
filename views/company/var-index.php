@@ -6,10 +6,16 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Company */
+/* @var $template app\models\Template|null */
 /* @var $dataProvider \yii\data\ActiveDataProvider */
 
-$this->title = $model->name . ': Переменные';
 $this->params['breadcrumbs'][] = ['label' => 'Организации', 'url' => ['index']];
+if ($template) {
+    $this->title = $model->name . ', Шаблон: ' . $template->name . ': Переменные';
+    $this->params['breadcrumbs'][] = ['label' => $model->name . ': Шаблоны', 'url' => ['template-index', 'id' => $model->id]];
+} else {
+    $this->title = $model->name . ': Переменные';
+}
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 
@@ -28,7 +34,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'var.name',
             'var.label',
             [
-                'attribute' => 'value',
+                'attribute' => 'required',
+                'value' => function ($model) {
+                    return $model->required ? 'Да' : 'Нет';
+                },
+            ],
+            [
+//                'attribute' => 'value',
                 'label' => 'Значение',
                 'value' => function ($var) use ($model) {
                     return ($value = $var->var->getValue($model->id)) ? $value->value : null;

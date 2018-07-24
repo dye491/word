@@ -139,7 +139,8 @@ class VarValueController extends Controller
 
         if ($model->load(Yii::$app->request->post()) /*&& $model->save()*/) {
             if ($model->isNewRecord) {
-                if ($model->save()) return $this->redirect(['company/var-index', 'id' => $company_id]);
+//                if ($model->save()) return $this->redirect(['company/var-index', 'id' => $company_id]);
+                if ($model->save()) return $this->goBack();
             } else {
                 if (isset($model->dirtyAttributes['value'])) {
                     if ($date === null) $date = (new \DateTime())->format('Y-m-d');
@@ -161,7 +162,8 @@ class VarValueController extends Controller
                         throw $e;
                     }
                 }
-                return $this->redirect(['company/var-index', 'id' => $company_id]);
+                return $this->goBack();
+//                return $this->redirect(['company/var-index', 'id' => $company_id]);
             }
         }
 

@@ -2,6 +2,7 @@
 
 use yii\grid\GridView;
 use yii\widgets\Pjax;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Company */
@@ -21,9 +22,29 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => 'yii\grid\SerialColumn',
                 'header' => '№',
-                'options' => ['width' => '5%'],
+                'headerOptions' => ['style' => 'width: 5%;'],
             ],
             'name',
+            [
+                'label' => 'Заполнение',
+                'content' => function ($tplModel) use ($model) {
+                    return ($varCount = $model->getVarsCount($tplModel->id)) ?
+                        '<span class="badge">' . ($model->getVarValuesCount($tplModel->id) * 100 / $varCount) . ' %</span>' :
+                        null;
+                },
+            ],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'headerOptions' => ['style' => 'width: 5%;'],
+                'template' => '{var}',
+                'buttons' => [
+                    'var' => function ($url, $tplModel, $key) use ($model) {
+                        return Html::a('<span class="fa fa-at"></span>',
+                            ['var-index', 'id' => $model->id, 'template_id' => $tplModel->id],
+                            ['title' => 'Переменные', 'aria-label' => 'Переменные', 'data-pjax' => '0']);
+                    },
+                ],
+            ],
         ],
     ]) ?>
     <?php Pjax::end() ?>

@@ -24,6 +24,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'layout' => '<div class="box-body no-padding table-responsive">{summary}{items}</div><div class="box-footer">{pager}</div>',
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'filterPosition'=>GridView::FILTER_POS_HEADER,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
