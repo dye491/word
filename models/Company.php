@@ -79,16 +79,6 @@ class Company extends ActiveRecord
      */
     public function getVars($template_id = null, $date = null)
     {
-        /*$date = (new \DateTime($date))->format('Y-m-d');
-        if ($template_id === null) {
-            $template_id = array_column($this->getTemplates()->asArray()->all(), 'id');
-        }
-        $query = TemplateVar::find()
-            ->where(['template_id' => $template_id])
-            ->andWhere(['or', ['>=', 'start_date', $date], ['start_date' => null]])
-            ->andWhere(['or', ['<=', 'end_date', $date], ['end_date' => null]])
-            ->with('var');*/
-
         return $this->getVarsQuery($template_id, $date)
             ->with('var');
     }
@@ -105,6 +95,7 @@ class Company extends ActiveRecord
         if ($template_id === null) {
             $template_id = array_column($this->getTemplates()->asArray()->all(), 'id');
         }
+
         return TemplateVar::find()
             ->where(['template_id' => $template_id])
             ->andWhere(['or', ['>=', 'start_date', $date], ['start_date' => null]])
@@ -119,16 +110,6 @@ class Company extends ActiveRecord
      */
     public function getVarsCount($template_id = null, $date = null)
     {
-        /*$date = (new \DateTime($date))->format('Y-m-d');
-        if ($template_id === null) {
-            $template_id = array_column($this->getTemplates()->asArray()->all(), 'id');
-        }
-        return TemplateVar::find()
-            ->where(['template_id' => $template_id])
-            ->andWhere(['or', ['>=', 'start_date', $date], ['start_date' => null]])
-            ->andWhere(['or', ['<=', 'end_date', $date], ['end_date' => null]])
-            ->andWhere(['required' => true])->count();*/
-
         return $this->getVarsQuery($template_id, $date)
             ->andWhere(['required' => true])
             ->count();
@@ -140,17 +121,6 @@ class Company extends ActiveRecord
         if ($template_id === null) {
             $template_id = array_column($this->getTemplates()->asArray()->all(), 'id');
         }
-
-        /*return TemplateVar::find()
-            ->where(['template_id' => $template_id])
-            ->andWhere(['or', ['>=', 'start_date', $date], ['start_date' => null]])
-            ->andWhere(['or', ['<=', 'end_date', $date], ['end_date' => null]])
-            ->andWhere(['required' => true])
-            ->andWhere(['exists', (new Query())->select('*')->from('var_value')
-                ->where(['company_id' => $this->id])
-                ->andWhere('var_id=template_var.var_id')
-                ->andWhere(['or', ['<=', 'start_date', $date], ['start_date' => null]])
-                ->andWhere(['or', ['>=', 'end_date', $date], ['end_date' => null]])])->count();*/
 
         return $this->getVarsQuery($template_id, $date)
             ->andWhere(['required' => true])
