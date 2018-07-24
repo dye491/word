@@ -13,8 +13,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="box">
 
-<!--    <h1>--><?//= Html::encode($this->title) ?><!--</h1>-->
-    <!--    --><?php //Pjax::begin(); ?>
+    <?php Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <div class="box-header">
@@ -33,13 +32,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ],
 
-//            'id',
             'name',
             [
                 'label' => 'Кол-во шаблонов',
                 'content' => function ($model) {
                     /* @var $model \app\models\Profile */
-                    return Html::a($model->getProfileTemplates()->count(), ['/profile/view', 'id' => $model->id]);
+                    return Html::a('<span class="badge">' . $model->getProfileTemplates()->count() . '</span>',
+                        ['/profile/view', 'id' => $model->id], ['data-pjax' => 0]);
                 },
                 'options' => ['width' => '15%'],
             ],
@@ -49,10 +48,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 'options' => [
                     'width' => '10%',
                 ],
-//                'header' => Yii::t('app', 'Delete'),
                 'template' => '{delete}',
             ],
         ],
     ]); ?>
-    <!--    --><?php //Pjax::end(); ?>
+    <?php Pjax::end(); ?>
 </div>
