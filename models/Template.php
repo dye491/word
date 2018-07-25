@@ -317,4 +317,20 @@ class Template extends ActiveRecord
     {
         return $this->hasMany(Document::class, ['template_id' => 'id']);
     }
+
+    /**
+     * Returns Document model for given company and date
+     * @param $company_id
+     * @param null $date
+     * @return array|null|Document
+     */
+    public function getDocument($company_id, $date = null)
+    {
+        if ($date === null) $date = date('Y-m-d');
+
+        return $this->getDocuments()
+            ->andWhere(['company_id' => $company_id])
+            ->andWhere(['<=', 'date', $date])
+            ->orderBy(['date' => SORT_DESC])->one();
+    }
 }

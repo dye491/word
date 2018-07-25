@@ -21,6 +21,11 @@ use Yii;
  */
 class Document extends \yii\db\ActiveRecord
 {
+    const
+        STATUS_NEW = 'new',
+        STATUS_READY = 'ready',
+        STATUS_SEND = 'sent';
+
     /**
      * {@inheritdoc}
      */

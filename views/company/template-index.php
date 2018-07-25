@@ -34,6 +34,16 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             [
+                'label' => 'Документ',
+                'content' => function ($template) use ($model) {
+                    $status = ($doc = $template->getDocument($model->id)) ? $doc->status : null;
+                    $valArr = ['new' => 'Новый', 'ready' => 'Подготовлен', 'sent' => 'Отправлен'];
+                    $val = isset($valArr[$status]) ? $valArr[$status] : null;
+
+                    return $val ? Html::a($val, '#') : '<span class="not-set">(не задано)</span>';
+                },
+            ],
+            [
                 'class' => 'yii\grid\ActionColumn',
                 'headerOptions' => ['style' => 'width: 5%;'],
                 'template' => '{var}',

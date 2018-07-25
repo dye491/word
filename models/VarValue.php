@@ -74,4 +74,32 @@ class VarValue extends ActiveRecord
     {
         return $this->hasOne(Variable::class, ['id' => 'var_id']);
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        $company = $this->company;
+        foreach ($this->var->templates as $template) {
+            if (array_key_exists('value', $changedAttributes) &&
+                $company->getVarValuesCount($template->id) == $company->getVarsCount($template->id)) {
+                $doc = Document::findOne([
+                    'company_id' => $this->company_id,
+                    'template_id' => $template->id,
+                    'date' => date('Y-m-d'),
+                ]);
+                if ($doc == null) $doc = new Document([
+                    'company_id' => $this->company_id,
+                    'template_id' => $template->id,
+                    'date' => date('Y-m-d'),
+                ]);
+                $doc->status = Document::STATUS_NEW;
+                $doc->sent_at = null;
+                $doc->save();
+            }
+        }
+    }
 }
