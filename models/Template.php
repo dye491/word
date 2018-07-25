@@ -24,6 +24,7 @@ use yii\db\ActiveRecord;
  * @property string $end_date
  * @property int $is_active
  *
+ * @property Document[] $documents
  * @property TemplateVar[] $templateVars
  * @property Variable[] $variables
  * @property ProfileTemplate[] $profileTemplates
@@ -307,5 +308,13 @@ class Template extends ActiveRecord
         }
 
         return false;
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getDocuments()
+    {
+        return $this->hasMany(Document::class, ['template_id' => 'id']);
     }
 }

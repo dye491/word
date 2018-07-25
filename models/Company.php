@@ -17,6 +17,8 @@ use yii\db\Query;
  * @property int $profile_id
  *
  * @property Profile $profile
+ * @property Document[] $documents
+ * @property VarValue[] $varValues
  */
 class Company extends ActiveRecord
 {
@@ -130,5 +132,21 @@ class Company extends ActiveRecord
                 ->andWhere(['or', ['>=', 'start_date', $date], ['start_date' => null]])
                 ->andWhere(['or', ['<=', 'end_date', $date], ['end_date' => null]])])
             ->count();
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getVarValues()
+    {
+        return $this->hasMany(VarValue::class, ['company_id' => 'id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getDocuments()
+    {
+        return $this->hasMany(Document::class, ['company_id' => 'id']);
     }
 }
