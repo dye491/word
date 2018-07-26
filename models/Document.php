@@ -59,7 +59,7 @@ class Document extends \yii\db\ActiveRecord
             'id' => Yii::t('app', 'ID'),
             'company_id' => Yii::t('app', 'Company ID'),
             'template_id' => Yii::t('app', 'Template ID'),
-            'date' => Yii::t('app', 'Date'),
+            'date' => Yii::t('app', 'Document Date'),
             'doc_path' => Yii::t('app', 'Doc Path'),
             'pdf_path' => Yii::t('app', 'Pdf Path'),
             'status' => Yii::t('app', 'Status'),

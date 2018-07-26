@@ -22,4 +22,8 @@ return [
     'Edit Var Value: ' => 'Редактировать значение переменной: ',
     'Sent At' => 'Отправлен',
     'Status' => 'Статус',
+    'The requested page does not exist.' => 'Страница не найдена.',
+    'Document Date' => 'Дата документа',
+    'Doc Path' => 'Путь к doc-файлу',
+    'Pdf Path' => 'Путь к pdf-файлу',
 ];
