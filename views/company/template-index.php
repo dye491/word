@@ -40,7 +40,9 @@ $this->params['breadcrumbs'][] = $this->title;
                     $valArr = ['new' => 'Новый', 'ready' => 'Подготовлен', 'sent' => 'Отправлен'];
                     $val = isset($valArr[$status]) ? $valArr[$status] : null;
 
-                    return $val ? Html::a($val, '#') : '<span class="not-set">(не задано)</span>';
+                    return $val ? Html::a($val, ['document/view', 'id' => $doc->id],
+                        ['title' => 'Просмотр документа', 'aria-label' => 'Просмотр документа', 'data-pjax' => 0])
+                        : '<span class="not-set">(не задано)</span>';
                 },
             ],
             [
