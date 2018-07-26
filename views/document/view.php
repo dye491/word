@@ -1,8 +1,10 @@
 <?php
 /* @var $this yii\web\View */
+
 /* @var $model \app\models\Document */
 
 use yii\widgets\DetailView;
+use yii\helpers\Html;
 
 $this->title = 'Документ';
 $this->params['breadcrumbs'][] = [
@@ -14,7 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="box">
     <div class="box-header">
-
+        <?php if (!$model->template->hasDocument($model->company, $model)): ?>
+            <?= Html::a('Сформировать', ['document/make-doc', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+        <?php endif; ?>
     </div>
     <div class="box-body">
         <?= DetailView::widget([
@@ -24,7 +28,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'company.name:text:Организация',
                 'template.name:text:Шаблон',
                 'date',
-                'doc_path',
+                [
+                    'attribute' => 'doc_path',
+                    'label' => Yii::t('app', 'Doc Path'),
+                    'value' => function ($model) {
+                        return $model->doc_path ? Html::a(basename($model->doc_path), ['download', 'id' => $model->id])
+                            : '<span class="not-set">(не задано)</span>';
+                    },
+                    'format' => 'html',
+                ],
                 'pdf_path',
                 [
                     'attribute' => 'status',

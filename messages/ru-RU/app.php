@@ -26,4 +26,5 @@ return [
     'Document Date' => 'Дата документа',
     'Doc Path' => 'Путь к doc-файлу',
     'Pdf Path' => 'Путь к pdf-файлу',
+    'File not found' => 'Файл не найден',
 ];

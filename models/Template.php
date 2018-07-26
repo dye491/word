@@ -3,9 +3,10 @@
 namespace app\models;
 
 use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\PhpWord;
+//use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Settings;
 use PhpOffice\PhpWord\TemplateProcessor;
+use Unoconv\Unoconv;
 use Yii;
 use yii\helpers\Json;
 use yii\httpclient\Client;
@@ -176,14 +177,21 @@ class Template extends ActiveRecord
     }
 
     /**
+     * @param $company Company
+     * @param $doc Document
      * @return bool|string
      */
-    public function getDocumentPath()
+    public function getDocumentPath($company, $doc)
     {
-        return $this->file_name ?
-            Yii::getAlias(self::OUTPUT_DIR) . DIRECTORY_SEPARATOR . $this->file_name
-            : false;
+        $path = false;
 
+        if ($this->file_name) {
+            $path = Yii::getAlias(self::OUTPUT_DIR) . DIRECTORY_SEPARATOR . $this->id;
+            $path .= DIRECTORY_SEPARATOR . $company->id . DIRECTORY_SEPARATOR . $doc->id;
+            $path .= DIRECTORY_SEPARATOR . $company->name . '_' . $doc->date . '_' . $this->file_name;
+        }
+
+        return $path;
     }
 
     /**
@@ -197,11 +205,13 @@ class Template extends ActiveRecord
     }
 
     /**
+     * @param $company Company
+     * @param $doc Document
      * @return bool
      */
-    public function hasDocument()
+    public function hasDocument($company, $doc)
     {
-        if (!($path = $this->getDocumentPath()))
+        if (!($path = $this->getDocumentPath($company, $doc)))
             return false;
 
         return file_exists($path) && is_file($path) && pathinfo($path, PATHINFO_EXTENSION) === 'docx';
@@ -219,46 +229,64 @@ class Template extends ActiveRecord
     }
 
     /**
+     * Makes Word 2007 document from this template
+     * @param $company Company
+     * @param $doc Document
      * @return bool
      */
-    public function makeDocument()
+    public function makeDocument($company, $doc)
     {
         $templatePath = $this->getTemplatePath();
         if (!$templatePath) return false;
 
         if (!file_exists($templatePath) || !is_file($templatePath)) return false;
 
-        $groupedVars = $this->getVariablesWithValues();
+//        $groupedVars = $this->getVariablesWithValues();
+        $templateVars = $company->getVars($this->id, $doc->date)->all();
         $templateProcessor = new TemplateProcessor($templatePath);
 
-        foreach ($groupedVars as $group => $names) {
-            if ($group) {
-                if (count($names['cols'])) {
-                    $rowIndexCol = array_keys($names['cols'])[0];
-                    $templateProcessor->cloneRow($rowIndexCol, count($names['rows']));
-                    foreach ($names['rows'] as $key => $row) {
-                        foreach ($row as $name => $value) {
-                            $templateProcessor->setValue($name . '#' . ($key + 1), $value);
-                        }
-                        $rowNumber = $key + 1;
-                        $templateProcessor->setValue("rowNumber#{$rowNumber}", $rowNumber);
-                    }
-                }
-            } else {
-                foreach ($names as $name => $value) {
-                    $templateProcessor->setValue($name, $value['values']);
-                }
-            }
+        /**
+         * @var $templateVar TemplateVar
+         * @var $value VarValue|null
+         */
+        foreach ($templateVars as $templateVar) {
+            $var = $templateVar->var;
+            $value = $var->getValue($company, $doc->date);
+            $templateProcessor->setValue($var->name, isset($value) ? $value->value : null);
         }
 
-        $templateProcessor->saveAs($this->getDocumentPath());
+        /*        foreach ($groupedVars as $group => $names) {
+                    if ($group) {
+                        if (count($names['cols'])) {
+                            $rowIndexCol = array_keys($names['cols'])[0];
+                            $templateProcessor->cloneRow($rowIndexCol, count($names['rows']));
+                            foreach ($names['rows'] as $key => $row) {
+                                foreach ($row as $name => $value) {
+                                    $templateProcessor->setValue($name . '#' . ($key + 1), $value);
+                                }
+                                $rowNumber = $key + 1;
+                                $templateProcessor->setValue("rowNumber#{$rowNumber}", $rowNumber);
+                            }
+                        }
+                    } else {
+                        foreach ($names as $name => $value) {
+                            $templateProcessor->setValue($name, $value['values']);
+                        }
+                    }
+                }*/
+
+        $documentPath = $this->getDocumentPath($company, $doc);
+        if (!file_exists($dir = dirname($documentPath))) mkdir($dir, 0775, true);
+        $templateProcessor->saveAs($documentPath);
         return true;
     }
 
     /**
+     * @param $company
+     * @param $doc
      * @return bool
      */
-    public function makePdf()
+    public function makePdf($company, $doc)
     {
         $path = Yii::getAlias('@app/vendor/dompdf/dompdf');
         Settings::setPdfRendererPath($path);
@@ -270,10 +298,10 @@ class Template extends ActiveRecord
             'PDF' => 'pdf',
         ];
 
-        if (!$this->hasDocument())
+        if (!$this->hasDocument($company, $doc))
             return false;
 
-        $fileName = $this->getDocumentPath();
+        $fileName = $this->getDocumentPath($company, $doc);
         $temp = IOFactory::load($fileName);
         $xmlWriter = IOFactory::createWriter($temp, 'PDF');
         $fileName = Yii::getAlias(self::OUTPUT_DIR . DIRECTORY_SEPARATOR .
@@ -283,14 +311,28 @@ class Template extends ActiveRecord
         return true;
     }
 
-    public function makePdfByApi()
+    /**
+     * @param $path
+     * @return string
+     */
+    public function makePdfByUnoconv($path)
+    {
+        $path_info = pathinfo($path);
+        $pdf_path = $path_info['dirname'] . DIRECTORY_SEPARATOR . $path_info['filename'] . '.pdf';
+        $unoconv = Unoconv::create(['timeout' => 42]);
+        $unoconv->transcode($path, 'pdf', $pdf_path);
+
+        return $pdf_path;
+    }
+
+    public function makePdfByApi($company, $doc)
     {
         $client = new Client();
 
         $request = $client->createRequest()
             ->setMethod('POST')
             ->setUrl('https://v2.convertapi.com/docx/to/pdf?Secret=qa3l5VtuaBQ6BNTj')
-            ->addFile('File', $this->getDocumentPath());;
+            ->addFile('File', $this->getDocumentPath($company, $doc));;
 
         $response = $request->send();
         Yii::error(print_r([
