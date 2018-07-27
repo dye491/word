@@ -6,8 +6,9 @@ use app\models\Document;
 use yii\web\NotFoundHttpException;
 use Yii;
 use yii\web\Response;
+use yii\web\Controller;
 
-class DocumentController extends \yii\web\Controller
+class DocumentController extends Controller
 {
     public function actionIndex()
     {
@@ -23,6 +24,11 @@ class DocumentController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     * @param $id
+     * @return null|Document
+     * @throws NotFoundHttpException
+     */
     private function findModel($id)
     {
         if (($model = Document::findOne(['id' => $id])) !== null) {
@@ -37,15 +43,14 @@ class DocumentController extends \yii\web\Controller
         $model = $this->findModel($id);
         $template = $model->template;
         if ($template->makeDocument($model->company, $model)) {
-            $model->doc_path = $template->getDocumentPath($model->company, $model);
-            $model->pdf_path = $template->makePdfByUnoconv($model->doc_path);
+            $model->doc_path = $template->getDocumentPath($model->company, $model, false);
+            $template->makePdfByUnoconv($model->company, $model);
+            $model->pdf_path = $template->getPdfPath($model->company, $model, false);
             $model->status = Document::STATUS_READY;
             $model->save();
         }
 
-        return $this->render('view', [
-            'model' => $model,
-        ]);
+        return $this->redirect(['view', 'id' => $id]);
     }
 
     /**
@@ -56,12 +61,28 @@ class DocumentController extends \yii\web\Controller
      */
     public function actionDownload($id)
     {
+        $path = $this->getPath($id, 'getDocumentPath', 'docx');
+
+        return Yii::$app->response->sendFile($path);
+    }
+
+    public function actionDownloadPdf($id)
+    {
+        $path = $this->getPath($id, 'getPdfPath', 'pdf');
+
+        return Yii::$app->response->sendFile($path);
+    }
+
+    protected function getPath($id, $method, $format)
+    {
         $model = $this->findModel($id);
-        if (!file_exists($model->doc_path) || !is_file($model->doc_path)
-            || pathinfo($model->doc_path, PATHINFO_EXTENSION) !== 'docx') {
+        $path = $model->template->$method($model->company, $model);
+
+        if (!file_exists($path) || !is_file($path)
+            || pathinfo($path, PATHINFO_EXTENSION) !== $format) {
             throw new NotFoundHttpException(Yii::t('app', 'File not found'));
         }
 
-        return Yii::$app->response->sendFile($model->doc_path);
+        return $path;
     }
 }

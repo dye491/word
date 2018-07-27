@@ -16,9 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="box">
     <div class="box-header">
-        <?php if (!$model->template->hasDocument($model->company, $model)): ?>
-            <?= Html::a('Сформировать', ['document/make-doc', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
-        <?php endif; ?>
+                <?php if (!$model->template->hasDocument($model->company, $model)): ?>
+        <?= Html::a('Сформировать', ['document/make-doc', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+                <?php endif; ?>
     </div>
     <div class="box-body">
         <?= DetailView::widget([
@@ -32,12 +32,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     'attribute' => 'doc_path',
                     'label' => Yii::t('app', 'Doc Path'),
                     'value' => function ($model) {
-                        return $model->doc_path ? Html::a(basename($model->doc_path), ['download', 'id' => $model->id])
+                        return $model->doc_path ? Html::a($model->doc_path, ['download', 'id' => $model->id])
                             : '<span class="not-set">(не задано)</span>';
                     },
                     'format' => 'html',
                 ],
-                'pdf_path',
+                [
+                    'attribute' => 'pdf_path',
+                    'value' => function ($model) {
+                        return $model->pdf_path ? Html::a($model->pdf_path, ['download-pdf', 'id' => $model->id])
+                            : '<span class="not-set">(не задано)</span>';
+                    },
+                    'format' => 'html',
+                ],
                 [
                     'attribute' => 'status',
                     'value' => function ($model) {

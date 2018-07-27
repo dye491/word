@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\helpers\TranslitHelper;
 use PhpOffice\PhpWord\IOFactory;
 //use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Settings;
@@ -177,31 +178,44 @@ class Template extends ActiveRecord
     }
 
     /**
+     * Returns path to document file
      * @param $company Company
      * @param $doc Document
+     * @param $absolute bool whether to return absolute path or only filename
      * @return bool|string
      */
-    public function getDocumentPath($company, $doc)
+    public function getDocumentPath($company, $doc, $absolute = true)
     {
         $path = false;
 
         if ($this->file_name) {
-            $path = Yii::getAlias(self::OUTPUT_DIR) . DIRECTORY_SEPARATOR . $this->id;
-            $path .= DIRECTORY_SEPARATOR . $company->id . DIRECTORY_SEPARATOR . $doc->id;
-            $path .= DIRECTORY_SEPARATOR . $company->name . '_' . $doc->date . '_' . $this->file_name;
+            $filename = $company->name . '_' . $doc->date . '_' . $this->file_name;
+            if ($absolute) {
+                $path .= Yii::getAlias(self::OUTPUT_DIR);
+                $path .= DIRECTORY_SEPARATOR . $this->id . DIRECTORY_SEPARATOR . $company->id;
+                $path .= DIRECTORY_SEPARATOR . $doc->id . DIRECTORY_SEPARATOR;
+            }
+            $path .= $filename;
+            $path = TranslitHelper::translit($path);
         }
 
         return $path;
     }
 
     /**
+     * @param $company
+     * @param $doc
+     * @param $absolute
      * @return bool|string
      */
-    public function getPdfPath()
+    public function getPdfPath($company, $doc, $absolute = true)
     {
-        return $this->file_name ?
-            Yii::getAlias(self::OUTPUT_DIR) . DIRECTORY_SEPARATOR . basename($this->file_name, '.docx') . '.pdf'
-            : false;
+        $path = $this->getDocumentPath($company, $doc, $absolute);
+        if (!$path) return false;
+
+        $filename = $company->name . '_' . $doc->date . '_' . basename($this->file_name, '.docx') . '.pdf';
+
+        return $absolute ? dirname($path) . DIRECTORY_SEPARATOR . $filename : $filename;
     }
 
     /**
@@ -218,11 +232,13 @@ class Template extends ActiveRecord
     }
 
     /**
+     * @param $company
+     * @param $doc
      * @return bool
      */
-    public function hasPdf()
+    public function hasPdf($company, $doc)
     {
-        if (!($path = $this->getPdfPath()))
+        if (!($path = $this->getPdfPath($company, $doc)))
             return false;
 
         return file_exists($path) && is_file($path) && pathinfo($path, PATHINFO_EXTENSION) === 'pdf';
@@ -278,6 +294,7 @@ class Template extends ActiveRecord
         $documentPath = $this->getDocumentPath($company, $doc);
         if (!file_exists($dir = dirname($documentPath))) mkdir($dir, 0775, true);
         $templateProcessor->saveAs($documentPath);
+
         return true;
     }
 
@@ -313,16 +330,19 @@ class Template extends ActiveRecord
 
     /**
      * @param $path
-     * @return string
      */
-    public function makePdfByUnoconv($path)
+    public function makePdfByUnoconv($company, $doc)
     {
-        $path_info = pathinfo($path);
-        $pdf_path = $path_info['dirname'] . DIRECTORY_SEPARATOR . $path_info['filename'] . '.pdf';
-        $unoconv = Unoconv::create(['timeout' => 42]);
-        $unoconv->transcode($path, 'pdf', $pdf_path);
+        $doc_path = $this->getDocumentPath($company, $doc);
+        $pdf_path = $this->getPdfPath($company, $doc);
+        /*        $command = 'unoconv -vvv --format %s --output %s %s 2>/var/www/output.txt';
+                $command = sprintf($command, 'pdf', escapeshellarg($pdf_path), escapeshellarg($doc_path));
+                $str = exec($command, $output, $result);
 
-        return $pdf_path;
+                return $result;*/
+
+        $unoconv = Unoconv::create(['timeout' => 42]);
+        $unoconv->transcode($doc_path, 'pdf', $pdf_path);
     }
 
     public function makePdfByApi($company, $doc)
@@ -344,7 +364,7 @@ class Template extends ActiveRecord
 
         if ($response->isOk) {
             $content = base64_decode($response->getData()['Files'][0]['FileData']);
-            $result = file_put_contents($this->getPdfPath(), $content);
+            $result = file_put_contents($this->getPdfPath($company, $doc), $content);
 //            Yii::info('filesize: ' . $result);
             return ($result !== false);
         }
