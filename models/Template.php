@@ -267,7 +267,7 @@ class Template extends ActiveRecord
          */
         foreach ($templateVars as $templateVar) {
             $var = $templateVar->var;
-            $value = $var->getValue($company, $doc->date);
+            $value = $var->getValue($company->id, $doc->date);
             $templateProcessor->setValue($var->name, isset($value) ? $value->value : null);
         }
 
