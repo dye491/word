@@ -24,6 +24,13 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'profile_id')->dropDownList($profiles) ?>
 
+    <?= $form->field($model, 'last_payment')->widget(\yii\jui\DatePicker::class, [
+        'options' => ['class' => 'form-control', 'placeholder' => 'дд.мм.гггг'],
+        'dateFormat' => 'php:d.m.Y',
+    ]) ?>
+
+    <?= $form->field($model, 'email') ?>
+
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
     </div>
