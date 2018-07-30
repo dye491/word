@@ -305,10 +305,10 @@ class Template extends ActiveRecord
      */
     public function makePdf($company, $doc)
     {
-        $path = Yii::getAlias('@app/vendor/dompdf/dompdf');
+        $path = Yii::getAlias('@app/vendor/mpdf/mpdf');
         Settings::setPdfRendererPath($path);
-        Settings::setPdfRendererName('DomPDF');
-        Settings::setDefaultFontName('DejaVu Serif');
+        Settings::setPdfRendererName('MPDF');
+//        Settings::setDefaultFontName('DejaVu Serif');
         $writers = [
             'Word2007' => 'docx',
             'HTML' => 'html',
@@ -321,15 +321,16 @@ class Template extends ActiveRecord
         $fileName = $this->getDocumentPath($company, $doc);
         $temp = IOFactory::load($fileName);
         $xmlWriter = IOFactory::createWriter($temp, 'PDF');
-        $fileName = Yii::getAlias(self::OUTPUT_DIR . DIRECTORY_SEPARATOR .
-            basename($this->file_name, '.docx') . '.pdf');
+        $fileName = $this->getPdfPath($company, $doc);
         $xmlWriter->save($fileName);
 
         return true;
     }
 
     /**
-     * @param $path
+     * Generates document in .pdf format
+     * @param $company Company
+     * @param $doc Document
      */
     public function makePdfByUnoconv($company, $doc)
     {

@@ -16,9 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="box">
     <div class="box-header">
-                <?php if (!$model->template->hasDocument($model->company, $model)): ?>
-        <?= Html::a('Сформировать', ['document/make-doc', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
-                <?php endif; ?>
+        <?php if ($model->status == \app\models\Document::STATUS_NEW): ?>
+            <?= Html::a('Сформировать', ['document/make-doc', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+        <?php endif; ?>
     </div>
     <div class="box-body">
         <?= DetailView::widget([

@@ -45,6 +45,7 @@ class DocumentController extends Controller
         if ($template->makeDocument($model->company, $model)) {
             $model->doc_path = $template->getDocumentPath($model->company, $model, false);
             $template->makePdfByUnoconv($model->company, $model);
+//            $template->makePdf($model->company, $model);
             $model->pdf_path = $template->getPdfPath($model->company, $model, false);
             $model->status = Document::STATUS_READY;
             $model->save();
