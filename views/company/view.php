@@ -57,6 +57,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         return isset($model->profile) ? $model->profile->name : null;
                     },
                 ],
+                [
+                    'attribute' => 'last_payment',
+                    'format' => 'html',
+                    'value' => function ($model) {
+                        return Yii::$app->formatter->asDate($model->last_payment, 'php:d.m.Y');
+                    },
+                ],
+                'email',
             ],
         ]) ?>
 

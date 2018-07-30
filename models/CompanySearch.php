@@ -2,10 +2,8 @@
 
 namespace app\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Company;
 
 /**
  * CompanySearch represents the model behind the search form of `app\models\Company`.
@@ -19,7 +17,8 @@ class CompanySearch extends Company
     {
         return [
             [['id', 'employee_count', 'profile_id'], 'integer'],
-            [['name', 'org_form'], 'safe'],
+            [['name', 'org_form', 'email'], 'safe'],
+            [['last_payment'], 'date', 'format' => 'php:d.m.Y'],
         ];
     }
 
@@ -65,7 +64,13 @@ class CompanySearch extends Company
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
-            ->andFilterWhere(['like', 'org_form', $this->org_form]);
+            ->andFilterWhere(['like', 'org_form', $this->org_form])
+            ->andFilterWhere(['like', 'email', $this->email]);
+
+        if ($this->last_payment) {
+            $query->andFilterWhere(['>=', 'last_payment', (new \DateTime($this->last_payment))->format('Y-m-d')]);
+        }
+
 
         return $dataProvider;
     }

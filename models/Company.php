@@ -15,6 +15,8 @@ use yii\db\Query;
  * @property int $employee_count
  * @property string $org_form
  * @property int $profile_id
+ * @property string $last_payment
+ * @property string $email
  *
  * @property Profile $profile
  * @property Document[] $documents
@@ -40,6 +42,8 @@ class Company extends ActiveRecord
             [['employee_count', 'profile_id'], 'integer'],
             [['name', 'org_form'], 'string', 'max' => 255],
             [['profile_id'], 'exist', 'skipOnError' => true, 'targetClass' => Profile::class, 'targetAttribute' => ['profile_id' => 'id']],
+            [['email'], 'email'],
+            [['last_payment'], 'date', 'format' => 'php:d.m.Y'],
         ];
     }
 
@@ -54,6 +58,8 @@ class Company extends ActiveRecord
             'employee_count' => 'Кол. сотрудников',
             'org_form' => 'Орг.-прав. форма',
             'profile_id' => 'Профиль',
+            'last_payment' => 'Дата оплаты',
+            'email' => 'E-mail',
         ];
     }
 
@@ -148,5 +154,21 @@ class Company extends ActiveRecord
     public function getDocuments()
     {
         return $this->hasMany(Document::class, ['company_id' => 'id']);
+    }
+
+    /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert)
+    {
+        if ($this->dirtyAttributes['last_payment']) {
+            $this->last_payment = \Yii::$app->formatter->asDate($this->last_payment, 'php:Y-m-d');
+        }
+        if (!$this->email) {
+            $this->email = null;
+        }
+
+        return parent::beforeSave($insert);
     }
 }
