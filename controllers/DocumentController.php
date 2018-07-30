@@ -74,6 +74,13 @@ class DocumentController extends Controller
         return Yii::$app->response->sendFile($path);
     }
 
+    /**
+     * @param $id
+     * @param $method
+     * @param $format
+     * @return mixed
+     * @throws NotFoundHttpException
+     */
     protected function getPath($id, $method, $format)
     {
         $model = $this->findModel($id);

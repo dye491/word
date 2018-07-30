@@ -145,6 +145,6 @@ class TemplateController extends Controller
             return $model;
         };
 
-        throw new NotFoundHttpException();
+        throw new NotFoundHttpException(\Yii::t('app', 'The requested page does not exist.'));
     }
 }
