@@ -6,6 +6,7 @@ use app\models\Template;
 use yii\helpers\Json;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
 
@@ -140,6 +141,10 @@ class TemplateController extends Controller
 
     private static function findModel($id)
     {
-        return Template::findOne(['id' => $id]);
+        if (($model = Template::findOne(['id' => $id])) !== null) {
+            return $model;
+        };
+
+        throw new NotFoundHttpException();
     }
 }
