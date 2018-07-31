@@ -38,7 +38,7 @@ class Company extends ActiveRecord
     public function rules()
     {
         return [
-            [['name'], 'required'],
+            [['name', 'email'], 'required'],
             [['employee_count', 'profile_id'], 'integer'],
             [['name', 'org_form'], 'string', 'max' => 255],
             [['profile_id'], 'exist', 'skipOnError' => true, 'targetClass' => Profile::class, 'targetAttribute' => ['profile_id' => 'id']],
