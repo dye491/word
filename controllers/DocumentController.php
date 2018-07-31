@@ -99,18 +99,29 @@ class DocumentController extends Controller
     public function actionSend($id)
     {
         $model = $this->findModel($id);
-        if (empty($to = $model->company->email)) {
+
+        if (empty($to = $model->company->email))
             throw new BadRequestHttpException("У организации \"{$model->company->name}\" не задан e-mail адрес.");
+
+        if (empty($model->company->last_payment))
+            throw new BadRequestHttpException("У организации \"{$model->company->name}\" отсутствует оплата сервиса. Отправка невозможна.");
+        elseif (($end_date = (new \DateTime($model->company->last_payment))
+                ->add(new \DateInterval("P1Y")))
+                ->format('Y-m-d') < date('Y-m-d')) {
+            throw new BadRequestHttpException("У организации \"{$model->company->name}\" оплата сервиса была более 1 года назад. Отправка невозможна.");
         }
+
         $mailer = Yii::$app->mailer;
         $fileName = $model->template->getPdfPath($model->company, $model, false);
         $filePath = $model->template->getPdfPath($model->company, $model);
+
         $message = $mailer->compose()
             ->setFrom(Yii::$app->params['adminEmail'])
             ->setTo($model->company->email)
             ->setSubject(mb_substr($fileName, 0, mb_strlen($fileName) - 4))
             ->setHtmlBody(Html::tag('p', Yii::t('app', 'See attachment')))
             ->attach($filePath, ['fileName' => $fileName]);
+
         if ($message->send()) {
             Yii::$app->session->setFlash('success', Yii::t('app', 'Message sent successfully.'));
             $model->status = Document::STATUS_SENT;
