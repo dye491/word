@@ -8,6 +8,7 @@ use yii\helpers\Html;
 use app\models\Document;
 
 $this->title = 'Документ';
+$this->params['breadcrumbs'][] = ['label' => 'Организации', 'url' => '/company'];
 $this->params['breadcrumbs'][] = [
     'label' => $model->company->name . ': Шаблоны',
     'url' => ['company/template-index', 'id' => $model->company->id],
