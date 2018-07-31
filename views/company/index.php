@@ -30,22 +30,9 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\SerialColumn'],
             [
                 'attribute' => 'name',
-//                'headerOptions' => ['style' => 'min-width: 33%;'],
+                'headerOptions' => ['style' => 'min-width: 33%;'],
             ],
-            'email',
             [
-                'attribute' => 'last_payment',
-                'content' => function ($model) {
-                    return Yii::$app->formatter->asDate($model->last_payment, 'php:d.m.Y');
-                },
-                'filter' => \yii\jui\DatePicker::widget([
-                    'model' => $searchModel,
-                    'attribute' => 'last_payment',
-                    'options' => ['class' => 'form-control'],
-                    'dateFormat' => 'php:d.m.Y',
-                ]),
-            ],
-            /*[
                 'attribute' => 'employee_count',
 //                'headerOptions' => ['style' => 'width: 5%;'],
             ],
@@ -66,7 +53,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'ip' => 'ИП',
                     'ooo' => 'ООО',
                 ],
-            ],*/
+            ],
             [
                 'attribute' => 'profile_id',
                 'value' => function ($model) {
