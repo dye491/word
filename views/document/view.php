@@ -5,6 +5,7 @@
 
 use yii\widgets\DetailView;
 use yii\helpers\Html;
+use app\models\Document;
 
 $this->title = 'Документ';
 $this->params['breadcrumbs'][] = [
@@ -16,8 +17,16 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="box">
     <div class="box-header">
-        <?php if ($model->status == \app\models\Document::STATUS_NEW): ?>
-            <?= Html::a('Сформировать', ['document/make-doc', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+        <?php if ($model->status == Document::STATUS_NEW): ?>
+            <?= Html::a('Сформировать', ['make', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+        <?php endif; ?>
+        <?php if ($model->status >= Document::STATUS_READY): ?>
+            <?= Html::a('Отправить', ['send', 'id' => $model->id], [
+                'class' => 'btn btn-success',
+                'data' => $model->status == Document::STATUS_SENT ? [
+                    'confirm' => "Документ уже был отправлен $model->sent_at. Отправить повторно?",
+                    'method' => 'post',
+                ] : null]) ?>
         <?php endif; ?>
     </div>
     <div class="box-body">

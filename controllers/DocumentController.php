@@ -3,6 +3,8 @@
 namespace app\controllers;
 
 use app\models\Document;
+use yii\helpers\Html;
+use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use Yii;
 use yii\web\Response;
@@ -38,7 +40,7 @@ class DocumentController extends Controller
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
 
-    public function actionMakeDoc($id)
+    public function actionMake($id)
     {
         $model = $this->findModel($id);
         $template = $model->template;
@@ -92,5 +94,32 @@ class DocumentController extends Controller
         }
 
         return $path;
+    }
+
+    public function actionSend($id)
+    {
+        $model = $this->findModel($id);
+        if (empty($to = $model->company->email)) {
+            throw new BadRequestHttpException("У организации \"{$model->company->name}\" не задан e-mail адрес.");
+        }
+        $mailer = Yii::$app->mailer;
+        $fileName = $model->template->getPdfPath($model->company, $model, false);
+        $filePath = $model->template->getPdfPath($model->company, $model);
+        $message = $mailer->compose()
+            ->setFrom(Yii::$app->params['adminEmail'])
+            ->setTo($model->company->email)
+            ->setSubject(mb_substr($fileName, 0, mb_strlen($fileName) - 4))
+            ->setHtmlBody(Html::tag('p', Yii::t('app', 'See attachment')))
+            ->attach($filePath, ['fileName' => $fileName]);
+        if ($message->send()) {
+            Yii::$app->session->setFlash('success', Yii::t('app', 'Message sent successfully.'));
+            $model->status = Document::STATUS_SENT;
+            $model->sent_at = date('Y-m-d H:i:s');
+            $model->save();
+        } else {
+            Yii::$app->session->setFlash('error', Yii::t('app', 'Error occurred while sending message.'));
+        }
+
+        return $this->redirect(['view', 'id' => $id]);
     }
 }

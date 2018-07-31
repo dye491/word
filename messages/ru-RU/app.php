@@ -29,4 +29,7 @@ return [
     'File not found' => 'Файл не найден',
     'The above error occurred while the Web server was processing your request.' => 'Данная ошибка произошла во время выполнения сервером Вашего запроса',
     'Please contact us if you think this is a server error. Thank you.' => 'Если вы думаете, что это ошибка сервера, сообщите администратору сервера.',
+    'See attachment' => 'Файл во вложении',
+    'Message sent successfully.' => 'Сообщение успешно отправлено',
+    'Error occurred while sending message.' => 'Ошибка: сообщение не отправлено',
 ];

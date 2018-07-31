@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "document".
@@ -19,12 +20,12 @@ use Yii;
  * @property Company $company
  * @property Template $template
  */
-class Document extends \yii\db\ActiveRecord
+class Document extends ActiveRecord
 {
     const
         STATUS_NEW = 'new',
         STATUS_READY = 'ready',
-        STATUS_SEND = 'sent';
+        STATUS_SENT = 'sent';
 
     /**
      * {@inheritdoc}
@@ -42,11 +43,12 @@ class Document extends \yii\db\ActiveRecord
         return [
             [['company_id', 'template_id', 'date'], 'required'],
             [['company_id', 'template_id'], 'integer'],
-            [['date', 'sent_at'], 'safe'],
+            [['date'], 'safe'],
+            [['sent_at'], 'date', /*'timestampAttribute' => 'sent_at', */'format' => 'php:Y-m-d H:i:s'],
             [['doc_path', 'pdf_path', 'status'], 'string', 'max' => 255],
             [['company_id', 'template_id', 'date'], 'unique', 'targetAttribute' => ['company_id', 'template_id', 'date']],
-            [['company_id'], 'exist', 'skipOnError' => true, 'targetClass' => Company::className(), 'targetAttribute' => ['company_id' => 'id']],
-            [['template_id'], 'exist', 'skipOnError' => true, 'targetClass' => Template::className(), 'targetAttribute' => ['template_id' => 'id']],
+            [['company_id'], 'exist', 'skipOnError' => true, 'targetClass' => Company::class, 'targetAttribute' => ['company_id' => 'id']],
+            [['template_id'], 'exist', 'skipOnError' => true, 'targetClass' => Template::class, 'targetAttribute' => ['template_id' => 'id']],
         ];
     }
 
@@ -72,7 +74,7 @@ class Document extends \yii\db\ActiveRecord
      */
     public function getCompany()
     {
-        return $this->hasOne(Company::className(), ['id' => 'company_id']);
+        return $this->hasOne(Company::class, ['id' => 'company_id']);
     }
 
     /**
@@ -80,6 +82,6 @@ class Document extends \yii\db\ActiveRecord
      */
     public function getTemplate()
     {
-        return $this->hasOne(Template::className(), ['id' => 'template_id']);
+        return $this->hasOne(Template::class, ['id' => 'template_id']);
     }
 }
