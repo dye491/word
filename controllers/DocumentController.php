@@ -7,7 +7,7 @@ use app\models\Document;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
 use yii\helpers\Url;
-use yii\web\BadRequestHttpException;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use Yii;
 use yii\web\Response;
@@ -129,14 +129,14 @@ class DocumentController extends Controller
         $model = $this->findModel($id);
 
         if (empty($to = $model->company->email))
-            throw new BadRequestHttpException("У организации \"{$model->company->name}\" не задан e-mail адрес.");
+            throw new ForbiddenHttpException("У организации \"{$model->company->name}\" не задан e-mail адрес.");
 
         if (empty($model->company->last_payment))
-            throw new BadRequestHttpException("У организации \"{$model->company->name}\" отсутствует оплата сервиса. Отправка невозможна.");
+            throw new ForbiddenHttpException("У организации \"{$model->company->name}\" отсутствует оплата сервиса. Отправка невозможна.");
         elseif (($end_date = (new \DateTime($model->company->last_payment))
                 ->add(new \DateInterval("P1Y")))
                 ->format('Y-m-d') < date('Y-m-d')) {
-            throw new BadRequestHttpException("У организации \"{$model->company->name}\" оплата сервиса была более 1 года назад. Отправка невозможна.");
+            throw new ForbiddenHttpException("У организации \"{$model->company->name}\" оплата сервиса была более 1 года назад. Отправка невозможна.");
         }
 
         $mailer = Yii::$app->mailer;
