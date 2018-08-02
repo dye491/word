@@ -2,8 +2,11 @@
 
 namespace app\controllers;
 
+use app\models\Company;
 use app\models\Document;
+use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use Yii;
@@ -12,9 +15,32 @@ use yii\web\Controller;
 
 class DocumentController extends Controller
 {
-    public function actionIndex()
+    /**
+     * Displays all documents for the given company
+     * @param $company_id
+     * @param string|null $date
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionIndex($company_id, $date = null)
     {
-        return $this->render('index');
+        if (($company = Company::findOne(['id' => $company_id])) === null) {
+            throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
+        }
+
+        Url::remember(Yii::$app->request->url);
+
+        if ($date === null) $date = date('Y-m-d');
+        $dataProvider = new ActiveDataProvider([
+            'query' => Document::find()->with('template')
+                ->where(['company_id' => $company_id])
+                ->andWhere(['<=', 'date', $date]),
+        ]);
+
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+            'company' => $company,
+        ]);
     }
 
     public function actionView($id)
@@ -48,6 +74,7 @@ class DocumentController extends Controller
             $model->doc_path = $template->getDocumentPath($model->company, $model, false);
             $template->makePdfByUnoconv($model->company, $model);
 //            $template->makePdf($model->company, $model);
+//            if ($template->makePdfByApi($model->company, $model))
             $model->pdf_path = $template->getPdfPath($model->company, $model, false);
             $model->status = Document::STATUS_READY;
             $model->save();
@@ -64,32 +91,33 @@ class DocumentController extends Controller
      */
     public function actionDownload($id)
     {
-        $path = $this->getPath($id, 'getDocumentPath', 'docx');
+        $path = $this->getPath($id, 'doc_path');
 
         return Yii::$app->response->sendFile($path);
     }
 
     public function actionDownloadPdf($id)
     {
-        $path = $this->getPath($id, 'getPdfPath', 'pdf');
+        $path = $this->getPath($id, 'pdf_path');
 
         return Yii::$app->response->sendFile($path);
     }
 
     /**
      * @param $id
-     * @param $method
-     * @param $format
+     * @param $field
      * @return mixed
      * @throws NotFoundHttpException
      */
-    protected function getPath($id, $method, $format)
+    private function getPath($id, $field)
     {
         $model = $this->findModel($id);
-        $path = $model->template->$method($model->company, $model);
+        $path = Yii::getAlias('@app/output') . DIRECTORY_SEPARATOR . $model->template_id;
+        $path .= DIRECTORY_SEPARATOR . $model->company_id . DIRECTORY_SEPARATOR . $model->id;
+        $path .= DIRECTORY_SEPARATOR . $model->$field;
+        Yii::info("path = {$path}");
 
-        if (!file_exists($path) || !is_file($path)
-            || pathinfo($path, PATHINFO_EXTENSION) !== $format) {
+        if (!file_exists($path) || !is_file($path)) {
             throw new NotFoundHttpException(Yii::t('app', 'File not found'));
         }
 

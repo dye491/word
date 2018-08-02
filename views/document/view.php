@@ -6,13 +6,11 @@
 use yii\widgets\DetailView;
 use yii\helpers\Html;
 use app\models\Document;
+use yii\helpers\Url;
 
 $this->title = 'Документ';
 $this->params['breadcrumbs'][] = ['label' => 'Организации', 'url' => '/company'];
-$this->params['breadcrumbs'][] = [
-    'label' => $model->company->name . ': Шаблоны',
-    'url' => ['company/template-index', 'id' => $model->company->id],
-];
+$this->params['breadcrumbs'][] = ['label' => $model->company->name, 'url' => Url::previous()];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 

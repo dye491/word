@@ -1,9 +1,38 @@
 <?php
 /* @var $this yii\web\View */
-?>
-<h1>/document/index</h1>
+/* @var $dataProvider \yii\data\ActiveDataProvider */
 
-<p>
-    You may change the content of this page by modifying
-    the file <code><?= __FILE__; ?></code>.
-</p>
+/* @var $company \app\models\Company */
+
+use yii\grid\GridView;
+use yii\widgets\Pjax;
+
+$this->title = $company->name . ': Документы';
+$this->params['breadcrumbs'][] = ['label' => 'Организации', 'url' => '/company'];
+$this->params['breadcrumbs'][] = $this->title;
+?>
+
+<div class="box">
+    <?php
+    Pjax::begin();
+    echo GridView::widget(['layout' => '<div class="box-body no-padding table-responsive">{items}</div><div class="box-footer">{pager}</div>',
+        'dataProvider' => $dataProvider,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn',
+                'header' => '№',
+                'headerOptions' => ['style' => 'width: 5%;'],
+            ],
+            'template.name',
+            'date',
+            'status',
+            'sent_at',
+            [
+                'class' => \yii\grid\ActionColumn::class,
+                'template' => '{view}',
+            ],
+        ],
+    ]);
+    Pjax::end();
+    ?>
+</div>
+
