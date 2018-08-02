@@ -132,18 +132,17 @@ class VarValueController extends Controller
             throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
         }
 
+        if ($date === null) $date = (new \DateTime())->format('Y-m-d');
         $model = $variable->getValue($company_id, $date);
         if ($model === null) {
             $model = new VarValue(['company_id' => $company_id, 'var_id' => $var_id, 'start_date' => $date]);
         }
 
-        if ($model->load(Yii::$app->request->post()) /*&& $model->save()*/) {
-            if ($model->isNewRecord) {
-//                if ($model->save()) return $this->redirect(['company/var-index', 'id' => $company_id]);
+        if ($model->load(Yii::$app->request->post())) {
+            if ($model->isNewRecord || $model->start_date == $date) {
                 if ($model->save()) return $this->goBack();
             } else {
                 if (isset($model->dirtyAttributes['value'])) {
-                    if ($date === null) $date = (new \DateTime())->format('Y-m-d');
                     $new_model = new VarValue($model->attributes);
                     $new_model->start_date = $date;
                     $new_model->id = null;
@@ -163,7 +162,6 @@ class VarValueController extends Controller
                     }
                 }
                 return $this->goBack();
-//                return $this->redirect(['company/var-index', 'id' => $company_id]);
             }
         }
 
