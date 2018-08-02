@@ -348,7 +348,7 @@ class Template extends ActiveRecord
 
     public function makePdfByApi($company, $doc)
     {
-        $client = new Client();
+        /*$client = new Client();
 
         $request = $client->createRequest()
             ->setMethod('POST')
@@ -368,6 +368,24 @@ class Template extends ActiveRecord
             $result = file_put_contents($this->getPdfPath($company, $doc), $content);
 //            Yii::info('filesize: ' . $result);
             return ($result !== false);
+        }*/
+        $secret = 'qa3l5VtuaBQ6BNTj';
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_BINARYTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/octet-stream', 'Accept: application/octet-stream', 'Content-Disposition: attachment; filename="file.docx"'));
+        curl_setopt($curl, CURLOPT_URL, "https://v2.convertapi.com/docx/to/pdf?secret=" . $secret);
+
+        $cfile = new \CURLFile($this->getDocumentPath($company, $doc), 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'file.docx');
+        curl_setopt($curl, CURLOPT_POSTFIELDS, ['file' => $cfile]);
+
+        $result = curl_exec($curl);
+        Yii::info('content-length: ' . strlen($result));
+        Yii::info('curl_info: ' . print_r(curl_getinfo($curl), true));
+        if (curl_getinfo($curl, CURLINFO_HTTP_CODE) == 200) {
+            return file_put_contents($this->getPdfPath($company, $doc), $result);
         }
 
         return false;
