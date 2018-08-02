@@ -25,7 +25,8 @@
         "kartik-v/yii2-widget-datepicker": "^1.4",
         "dmstr/yii2-adminlte-asset": "^2.6",
         "php-unoconv/php-unoconv": "^4.1",
-        "mpdf/mpdf": "^7.1"
+        "mpdf/mpdf": "^7.1",
+        "kartik-v/yii2-widget-select2": "^2.1"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",
