@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <div class="box">
     <div class="box-header">
-        <?php if ($model->status == Document::STATUS_NEW): ?>
+        <?php if ($model->status == Document::STATUS_NEW || !$model->pdf_path): ?>
             <?= Html::a('Сформировать', ['make', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
         <?php endif; ?>
         <?php if ($model->status >= Document::STATUS_READY): ?>
