@@ -73,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => 'yii\grid\ActionColumn',
                 'headerOptions' => ['style' => ['width' => '10%']],
-                'template' => '{var} {template} {update} {delete}',
+                'template' => '{var} {template} {doc} {update} {delete}',
                 'buttons' => [
                     'template' => function ($url, $model, $key) {
                         return Html::a('<span class="glyphicon glyphicon-list-alt"></span>', ['template-index', 'id' => $model->id],
@@ -82,6 +82,11 @@ $this->params['breadcrumbs'][] = $this->title;
                     'var' => function ($url, $model, $key) {
                         return Html::a('<span class="fa fa-at"></span>', ['var-index', 'id' => $model->id],
                             ['title' => 'Переменные', 'aria-label' => 'Переменные', 'data-pjax' => '0']);
+                    },
+                    'doc' => function ($url, $model, $key) {
+                        return Html::a('<span class="glyphicon glyphicon-file"></span>',
+                            ['/document', 'company_id' => $key],
+                            ['title' => 'Документы', 'aria-label' => 'Документы', 'data-pjax' => '0']);
                     },
                 ],
             ],
