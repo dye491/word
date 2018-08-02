@@ -15,7 +15,10 @@ use yii\jui\DatePicker;
     <?php $form = ActiveForm::begin(); ?>
 
     <?php if (Yii::$app->controller->action->id == 'create')
-        echo $form->field($model, 'var_id')->dropDownList($varList)->label('Переменная')
+        echo $form->field($model, 'var_id')->widget('\kartik\select2\Select2', [
+            'data' => $varList,
+        ])
+            ->label('Переменная')
     ?>
 
     <!--    --><? //= $form->field($model, 'template_id')->textInput() ?>

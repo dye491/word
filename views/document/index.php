@@ -24,7 +24,18 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'template.name',
             'date',
-            'status',
+            [
+                'attribute' => 'status',
+                'value' => function ($model) {
+                    $arr = [
+                        'new' => 'Новый',
+                        'ready' => 'Подготовлен',
+                        'sent' => 'Отправлен',
+                    ];
+
+                    return $arr[$model->status];
+                },
+            ],
             'sent_at',
             [
                 'class' => \yii\grid\ActionColumn::class,
