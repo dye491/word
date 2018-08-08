@@ -17,7 +17,7 @@ class m180808_132750_create_ved_table extends Migration
             'code' => $this->string()->notNull(),
             'text' => $this->string()->notNull(),
             'company_id' => $this->integer()->notNull(),
-            'start_date' => $this->date()->notNull(),
+            'start_date' => $this->date()->defaultValue(null),
             'end_date' => $this->date()->defaultValue(null),
         ]);
 

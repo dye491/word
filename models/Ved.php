@@ -33,11 +33,11 @@ class Ved extends ActiveRecord
     public function rules()
     {
         return [
-            [['code', 'text', 'company_id', 'start_date'], 'required'],
+            [['code', 'text', 'company_id'], 'required'],
             [['company_id'], 'integer'],
             [['start_date', 'end_date'], 'safe'],
             [['code', 'text'], 'string', 'max' => 255],
-            [['company_id'], 'exist', 'skipOnError' => true, 'targetClass' => Company::className(), 'targetAttribute' => ['company_id' => 'id']],
+            [['company_id'], 'exist', 'skipOnError' => true, 'targetClass' => Company::class, 'targetAttribute' => ['company_id' => 'id']],
         ];
     }
 
@@ -61,6 +61,6 @@ class Ved extends ActiveRecord
      */
     public function getCompany()
     {
-        return $this->hasOne(Company::className(), ['id' => 'company_id']);
+        return $this->hasOne(Company::class, ['id' => 'company_id']);
     }
 }
