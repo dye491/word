@@ -32,4 +32,10 @@ return [
     'See attachment' => 'Файл во вложении',
     'Message sent successfully.' => 'Сообщение успешно отправлено',
     'Error occurred while sending message.' => 'Ошибка: сообщение не отправлено',
+    'Code' => 'Код ОКВЭД',
+    'Text' => 'Наименование',
+    'Name, nominative case' => 'Фамилия И.О., им. падеж',
+    'Name, genitive case' => 'Фамилия И.О., род. падеж',
+    'Position, nominative case' => 'Должность, им. падеж',
+    'Position, genitive case' => 'Должность, род. падеж',
 ];
