@@ -38,4 +38,7 @@ return [
     'Name, genitive case' => 'Фамилия И.О., род. падеж',
     'Position, nominative case' => 'Должность, им. падеж',
     'Position, genitive case' => 'Должность, род. падеж',
+    'Kinds of activity' => 'Виды деятельности',
+    'Create kind of activity' => 'Создать ВЭД',
+    'Update kind of activity' => 'Изменить ВЭД',
 ];

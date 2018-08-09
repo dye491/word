@@ -19,6 +19,8 @@ use yii\db\ActiveRecord;
  */
 class Ved extends ActiveRecord
 {
+    use ModelTrait;
+
     /**
      * {@inheritdoc}
      */
@@ -35,7 +37,7 @@ class Ved extends ActiveRecord
         return [
             [['code', 'text', 'company_id'], 'required'],
             [['company_id'], 'integer'],
-            [['start_date', 'end_date'], 'safe'],
+            [['start_date', 'end_date'], 'date', 'format' => 'php:d.m.Y'],
             [['code', 'text'], 'string', 'max' => 255],
             [['company_id'], 'exist', 'skipOnError' => true, 'targetClass' => Company::class, 'targetAttribute' => ['company_id' => 'id']],
         ];
@@ -62,5 +64,35 @@ class Ved extends ActiveRecord
     public function getCompany()
     {
         return $this->hasOne(Company::class, ['id' => 'company_id']);
+    }
+
+    public function beforeSave($insert)
+    {
+        if ($this->dirtyAttributes['start_date']) {
+            $this->start_date = Yii::$app->formatter->asDate($this->start_date, 'php:Y-m-d');
+        }
+        if ($this->dirtyAttributes['end_date']) {
+            $this->end_date = Yii::$app->formatter->asDate($this->end_date, 'php:Y-m-d');
+        }
+
+        return parent::beforeSave($insert);
+    }
+
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        $this->updateVar('OKVED', function ($model) {
+            return $model->text . ' (код ОКВЭД ' . $model->code . ')';
+        });
+    }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+
+        $this->updateVar('OKVED', function ($model) {
+            return $model->text . ' (код ОКВЭД ' . $model->code . ')';
+        });
     }
 }

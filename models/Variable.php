@@ -111,4 +111,29 @@ class Variable extends ActiveRecord
             ->orderBy(['start_date' => SORT_DESC])
             ->one();
     }
+
+    /**
+     * Returns 'end_date' for the given company's variable value and current date or null
+     * @param $company_id integer
+     * @param $date string|null current date
+     * @return null|string
+     */
+    public function getEndDate($company_id, $date = null)
+    {
+        $date = (new \DateTime($date))->format('Y-m-d');
+        /**
+         * @var $value VarValue
+         */
+        $value = $this->getValues()->where(['company_id' => $company_id])
+            ->andWhere(['>', 'start_date', $date])
+            ->orderBy(['start_date' => SORT_ASC])->one();
+
+        if ($value) {
+            return (new \DateTime($value->start_date))
+                ->sub(new \DateInterval('P1D'))
+                ->format('Y-m-d');
+        }
+
+        return null;
+    }
 }
