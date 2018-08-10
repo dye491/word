@@ -52,9 +52,13 @@ $this->params['breadcrumbs'][] = $this->title;
                 'controller' => 'var-value',
                 'buttons' => [
                     'edit' => function ($url, $varModel, $key) use ($model) {
-                        return Html::a('<span class="glyphicon glyphicon-pencil">',
-                            ['var-value/edit', 'company_id' => $model->id, 'var_id' => $varModel->var->id],
-                            ['title' => 'Редактировать значение', 'aria-label' => 'Редактировать значение', 'data-pjax' => '0']);
+                        if (!$varModel->var->group) {
+                            return Html::a('<span class="glyphicon glyphicon-pencil">',
+                                ['var-value/edit', 'company_id' => $model->id, 'var_id' => $varModel->var->id],
+                                ['title' => 'Редактировать значение', 'aria-label' => 'Редактировать значение', 'data-pjax' => '0']);
+                        }
+
+                        return null;
                     },
                 ],
             ],

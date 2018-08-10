@@ -32,10 +32,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'name',
                 'headerOptions' => ['style' => 'min-width: 33%;'],
             ],
-            [
+            /*[
                 'attribute' => 'employee_count',
 //                'headerOptions' => ['style' => 'width: 5%;'],
-            ],
+            ],*/
             [
                 'attribute' => 'org_form',
                 'value' => function ($model) {
@@ -62,18 +62,45 @@ $this->params['breadcrumbs'][] = $this->title;
                 'filter' => ArrayHelper::map(\app\models\Profile::find()->asArray()->all(), 'id', 'name'),
             ],
             [
+                'label' => 'Срок действия дог.',
+                'value' => function ($model) {
+                    return (new DateTime($model->last_payment))
+                        ->add(new DateInterval('P1Y'))
+                        ->format('d.m.Y');
+                },
+                'filter' => \yii\jui\DatePicker::widget([
+                    'model' => $searchModel,
+                    'attribute' => 'last_payment',
+                    'dateFormat' => 'php:d.m.Y',
+                    'options' => ['class' => 'form-control'],
+                ]),
+            ],
+            [
                 'label' => 'Заполнение',
                 'content' => function ($model) {
-                    return ($varCount = $model->getVarsCount()) ?
-                        '<span class="badge">' . ($model->getVarValuesCount() * 100 / $varCount) . ' %</span>' :
-                        null;
+                    if ($varCount = $model->getVarsCount()) {
+                        $varValuesCount = $model->getVarValuesCount();
+                        $options = ['class' => 'badge'];
+                        Html::addCssClass($options, ($varValuesCount == $varCount) ? 'bg-green' : 'bg-red');
+
+                        return Html::tag('span',
+                            Html::a(($varValuesCount * 100 / $varCount) . '%', ['var-index', 'id' => $model->id], [
+                                'style' => 'color: white;', 'data-pjax' => 0,
+                                'title' => 'Редактировать значения переменных',
+                                'aria-label' => 'Редактировать значения переменных',
+                            ]),
+                            $options);
+                    }
+
+                    return null;
                 },
             ],
 
             [
                 'class' => 'yii\grid\ActionColumn',
                 'headerOptions' => ['style' => ['width' => '10%']],
-                'template' => '{var} {template} {doc} {update} {delete}',
+//                'template' => '{var} {template} {doc} {update} {delete}',
+                'template' => '{template} {doc} {update} {delete}',
                 'buttons' => [
                     'template' => function ($url, $model, $key) {
                         return Html::a('<span class="glyphicon glyphicon-list-alt"></span>', ['template-index', 'id' => $model->id],
