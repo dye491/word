@@ -38,7 +38,7 @@ class TemplateController extends Controller
                     $model->file_name = $uploadedFile->baseName . '.' . $uploadedFile->extension;
                 }
                 if ($model->save(false)) {
-                    return $this->redirect('/');
+                    return $this->redirect(['index']);
                 }
             }
         }

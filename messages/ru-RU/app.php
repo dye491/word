@@ -39,6 +39,11 @@ return [
     'Position, nominative case' => 'Должность, им. падеж',
     'Position, genitive case' => 'Должность, род. падеж',
     'Kinds of activity' => 'Виды деятельности',
-    'Create kind of activity' => 'Создать ВЭД',
+    'Create kind of activity' => 'Добавить ВЭД',
     'Update kind of activity' => 'Изменить ВЭД',
+    'Create Employee' => 'Добавить  сотрудника',
+    'Employees' => 'Сотрудники',
+    'Update Employee: {nameAttribute}' => 'Изменить: {nameAttribute}',
+    'Hire Date' => 'Дата приема',
+    'Dismissal Date' => 'Дата увольнения',
 ];

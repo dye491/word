@@ -82,9 +82,11 @@ class Ved extends ActiveRecord
     {
         parent::afterSave($insert, $changedAttributes);
 
-        $this->updateVar('OKVED', function ($model) {
-            return $model->text . ' (код ОКВЭД ' . $model->code . ')';
-        });
+        $this->updateVars([
+            'OKVED' => function ($model) {
+                return $model->text . ' (код ОКВЭД ' . $model->code . ')';
+            },
+        ]);
     }
 
     public function afterDelete()

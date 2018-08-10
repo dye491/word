@@ -8,14 +8,28 @@ use yii\helpers\Html;
 use yii\grid\GridView;
 
 $this->title = "Настройка шаблона \"{$model->name}\"";
-//$this->params['breadcrumbs'][] = ['label' => 'Список шаблонов', 'url' => '/template'];
+$this->params['breadcrumbs'][] = ['label' => 'Шаблоны', 'url' => 'index'];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<!--<h1>--><? //= Html::encode($this->title) ?><!--</h1>-->
-<div class="box">
+<!--<ul class="nav nav-tabs">
+    <li role="presentation" class=""><a href="#template-params">Параметры</a></li>
+    <li role="presentation"><a href="#template-vars">Переменные </a></li>
+</ul>-->
+<div id="template-params" class="box">
+    <div class="box-header">
+        <h3>Параметры шаблона</h3>
+    </div>
+    <div class="box-body">
+
+        <?= $this->render('_form', ['model' => $model]) ?>
+    </div>
+</div>
+
+<div id="template-vars" class="box">
     <div class="box-header">
         <span class="h3">Переменные шаблона</span>
-        <?= Html::a('Добавить', ['template-var/create', 'template_id' => $model->id], ['class' => 'btn btn-success pull-right']) ?>
+        <?= Html::a('Добавить', ['template-var/create', 'template_id' => $model->id],
+            ['class' => 'btn btn-success pull-right']) ?>
     </div>
 
     <?= GridView::widget([
@@ -60,13 +74,4 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
         ],
     ]) ?>
-</div>
-<div class="box">
-    <div class="box-header">
-        <h3>Параметры шаблона</h3>
-    </div>
-    <div class="box-body">
-
-        <?= $this->render('_form', ['model' => $model]) ?>
-    </div>
 </div>

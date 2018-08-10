@@ -159,23 +159,20 @@ class Template extends ActiveRecord
             } else {
                 $result[$var->group][$var->name]['values'] = $val ? $val->value : null;
             }
+        }
 
-            foreach ($result as $group => $items) {
-                if ($group) {
-                    $result[$group] = [];
-                    $result[$group]['cols'] = $items;
-                    $result[$group]['rows'] = [];
-                    $row = [];
-                    foreach ($items as $name => $item) {
-                        $row[0][$name] = null;
-                        /*for ($rowNumber = 0; $rowNumber < count($item['values']); $rowNumber++) {
-                            $row[$rowNumber][$name] = $item['values'][$rowNumber];
-                        }*/
-                        foreach ($item['values'] as $index => $value) {
-                            $row[$index][$name] = $value;
-                        }
-                        $result[$group]['rows'] = $row;
+        foreach ($result as $group => $items) {
+            if ($group) {
+                $result[$group] = [];
+                $result[$group]['cols'] = $items;
+                $result[$group]['rows'] = [];
+                $row = [];
+                foreach ($items as $name => $item) {
+                    $row[0][$name] = null;
+                    foreach ($item['values'] as $index => $value) {
+                        $row[$index][$name] = $value;
                     }
+                    $result[$group]['rows'] = $row;
                 }
             }
         }
@@ -305,17 +302,6 @@ class Template extends ActiveRecord
         $templateProcessor = new TemplateProcessor($templatePath);
         $this->varList = $templateProcessor->getVariables();
         $groupedVars = $this->getVarsWithValues($company, $doc->date);
-//        $templateVars = $company->getVars($this->id, $doc->date)->all();
-
-        /**
-         * @var $templateVar TemplateVar
-         * @var $value VarValue|null
-         */
-        /*        foreach ($templateVars as $templateVar) {
-                    $var = $templateVar->var;
-                    $value = $var->getValue($company->id, $doc->date);
-                    $templateProcessor->setValue($var->name, isset($value) ? $value->value : null);
-                }*/
 
         foreach ($groupedVars as $group => $vars) {
             if ($group) {
@@ -459,5 +445,39 @@ class Template extends ActiveRecord
             ->andWhere(['company_id' => $company_id])
             ->andWhere(['<=', 'date', $date])
             ->orderBy(['date' => SORT_DESC])->one();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+        if (array_key_exists('file_name', $changedAttributes)) {
+            if ($changedAttributes['file_name']) {
+                Yii::$app->db->createCommand()
+                    ->delete(TemplateVar::tableName(), ['template_id' => $this->id])
+                    ->execute();
+            }
+            $processor = new TemplateProcessor($this->getTemplatePath());
+
+            $varList = $processor->getVariables();
+            $varIds = array_column(Variable::find()
+                ->where(['name' => $varList])
+                ->select('id')->asArray()->all(), 'id');
+
+            $cols = ['var_id', 'template_id', 'required', 'start_date', 'end_date'];
+            $rows = [];
+
+            foreach ($varIds as $varId) {
+                $rows[] = [$varId, $this->id, true, $this->start_date, $this->end_date];
+            }
+            if ($rows) {
+                Yii::$app->db->createCommand()
+                    ->batchInsert(TemplateVar::tableName(), $cols, $rows)
+                    ->execute();
+            }
+        }
     }
 }
