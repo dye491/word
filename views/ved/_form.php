@@ -8,7 +8,7 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="box-body">
+<div class="box-body ved-form">
 
     <?php $form = ActiveForm::begin(); ?>
 
