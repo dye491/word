@@ -68,7 +68,9 @@ class CompanySearch extends Company
             ->andFilterWhere(['like', 'email', $this->email]);
 
         if ($this->last_payment) {
-            $query->andFilterWhere(['>=', 'last_payment', (new \DateTime($this->last_payment))->format('Y-m-d')]);
+            $query->andFilterWhere(['<=', 'last_payment', (new \DateTime($this->last_payment))
+                ->sub(new \DateInterval('P1Y'))
+                ->format('Y-m-d')]);
         }
 
 

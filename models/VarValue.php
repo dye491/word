@@ -37,7 +37,7 @@ class VarValue extends ActiveRecord
             [['company_id', 'var_id'], 'required'],
             [['company_id', 'var_id'], 'integer'],
             [['start_date', 'end_date'], 'safe'],
-            [['value'], 'string', 'max' => 255],
+            [['value'], 'string'/*, 'max' => 255*/],
             [['company_id', 'var_id', 'start_date'], 'unique', 'targetAttribute' => ['company_id', 'var_id', 'start_date']],
             [['company_id'], 'exist', 'skipOnError' => true, 'targetClass' => Company::class, 'targetAttribute' => ['company_id' => 'id']],
             [['var_id'], 'exist', 'skipOnError' => true, 'targetClass' => Variable::class, 'targetAttribute' => ['var_id' => 'id']],

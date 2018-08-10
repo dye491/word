@@ -106,8 +106,8 @@ class Company extends ActiveRecord
 
         return TemplateVar::find()
             ->where(['template_id' => $template_id])
-            ->andWhere(['or', ['>=', 'start_date', $date], ['start_date' => null]])
-            ->andWhere(['or', ['<=', 'end_date', $date], ['end_date' => null]]);
+            ->andWhere(['or', ['<=', 'start_date', $date], ['start_date' => null]])
+            ->andWhere(['or', ['>=', 'end_date', $date], ['end_date' => null]]);
     }
 
     /**
@@ -135,8 +135,8 @@ class Company extends ActiveRecord
             ->andWhere(['exists', (new Query())->select('*')->from('var_value')
                 ->where(['company_id' => $this->id])
                 ->andWhere('var_id=template_var.var_id')
-                ->andWhere(['or', ['>=', 'start_date', $date], ['start_date' => null]])
-                ->andWhere(['or', ['<=', 'end_date', $date], ['end_date' => null]])])
+                ->andWhere(['or', ['<=', 'start_date', $date], ['start_date' => null]])
+                ->andWhere(['or', ['>=', 'end_date', $date], ['end_date' => null]])])
             ->count();
     }
 

@@ -34,7 +34,7 @@ class DocumentController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => Document::find()->with('template')
                 ->where(['company_id' => $company_id])
-                ->andWhere(['<=', 'date', $date]),
+                ->andWhere(['<=', 'date', $date])->orderBy(['date' => SORT_DESC]),
         ]);
 
         return $this->render('index', [
