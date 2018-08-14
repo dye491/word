@@ -4,6 +4,8 @@
 
 /* @var $model \app\models\Template */
 
+/* @var $undefinedVars string */
+
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -30,6 +32,11 @@ $this->params['breadcrumbs'][] = $this->title;
         <span class="h3">Переменные шаблона</span>
         <?= Html::a('Добавить', ['template-var/create', 'template_id' => $model->id],
             ['class' => 'btn btn-success pull-right']) ?>
+        <?php if ($undefinedVars): ?>
+            <p class="bg-warning" style="margin-top: 16px; margin-bottom: 0;">
+                Внимание! Не определены следующие переменные шаблона: <?= $undefinedVars ?>
+            </p>
+        <?php endif; ?>
     </div>
 
     <?= GridView::widget([

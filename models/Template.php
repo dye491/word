@@ -480,4 +480,12 @@ class Template extends ActiveRecord
             }
         }
     }
+
+    /**
+     * @return string[]
+     */
+    public function getVarNamesFromTemplateFile()
+    {
+        return (new TemplateProcessor($this->getTemplatePath()))->getVariables();
+    }
 }

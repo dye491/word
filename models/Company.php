@@ -59,7 +59,7 @@ class Company extends ActiveRecord
             'employee_count' => 'Кол. сотрудников',
             'org_form' => 'Орг.-прав. форма',
             'profile_id' => 'Профиль',
-            'last_payment' => 'Дата оплаты',
+            'last_payment' => 'Дата заключения договора',
             'email' => 'E-mail',
         ];
     }

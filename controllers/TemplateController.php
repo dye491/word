@@ -86,6 +86,11 @@ class TemplateController extends Controller
             'query' => $model->getTemplateVars(),
         ]);
 
+        $templateVars = $model->getTemplateVars()->joinWith('var')/*->select('var.name')*/
+        ->asArray()->all();
+        $undefinedVars = implode(', ', array_diff($model->getVarNamesFromTemplateFile(),
+            array_column(array_column($templateVars, 'var'), 'name')));
+
         if ($model->load(\Yii::$app->request->post()) /*&& $model->validate()*/) {
             $uploadedFile = UploadedFile::getInstance($model, 'templateFile');
             $model->templateFile = $uploadedFile;
@@ -105,6 +110,7 @@ class TemplateController extends Controller
         return $this->render('edit', [
             'model' => $model,
             'dataProvider' => $dataProvider,
+            'undefinedVars' => $undefinedVars,
         ]);
     }
 
