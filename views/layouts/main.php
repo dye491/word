@@ -34,17 +34,27 @@ if (Yii::$app->controller->action->id === 'login') {
         <?php $this->head() ?>
     </head>
     <body class="hold-transition skin-blue sidebar-mini">
-    <?php $this->beginBody() ?>
+    <?php $this->beginBody();
+    if ($id = \app\models\Company::getCurrent()) {
+        $company = \app\models\Company::findOne(['id' => $id]);
+    }
+    ?>
     <div class="wrapper">
 
         <?= $this->render(
             'header.php',
-            ['directoryAsset' => $directoryAsset]
+            [
+                'directoryAsset' => $directoryAsset,
+                'company' => isset($company) ? $company : null,
+            ]
         ) ?>
 
         <?= $this->render(
             'left.php',
-            ['directoryAsset' => $directoryAsset]
+            [
+                'directoryAsset' => $directoryAsset,
+                'company' => isset($company) ? $company : null,
+            ]
         )
         ?>
 

@@ -25,7 +25,7 @@ class CompanyController extends Controller
     {
         return [
             'verbs' => [
-                'class' => VerbFilter::className(),
+                'class' => VerbFilter::class,
                 'actions' => [
                     'delete' => ['POST'],
                 ],
@@ -89,8 +89,8 @@ class CompanyController extends Controller
     /**
      * Displays variables tied to one or all Company template(s)
      * @param $id
-     * @param null $date
-     * @param null $template_id
+     * @param null|string $date
+     * @param null|integer $template_id
      * @return string
      */
     public function actionVarIndex($id, $template_id = null, $date = null)
@@ -183,4 +183,18 @@ class CompanyController extends Controller
 
         throw new NotFoundHttpException(Yii::t('app', 'The requested page does not exist.'));
     }
+
+    /**
+     * @param $id
+     * @return \yii\web\Response
+     */
+    public function actionSet($id)
+    {
+        $company = $this->findModel($id);
+        Company::setCurrent($id);
+        Yii::$app->session->setFlash('success', "Текущая организация: $company->name");
+
+        return $this->redirect('index');
+    }
+
 }

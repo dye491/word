@@ -100,7 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'class' => 'yii\grid\ActionColumn',
                 'headerOptions' => ['style' => ['width' => '10%']],
 //                'template' => '{var} {template} {doc} {update} {delete}',
-                'template' => '{template} {doc} {update} {delete}',
+                'template' => '{template} {doc} {set} {update} {delete}',
                 'buttons' => [
                     'template' => function ($url, $model, $key) {
                         return Html::a('<span class="glyphicon glyphicon-list-alt"></span>', ['template-index', 'id' => $model->id],
@@ -114,6 +114,15 @@ $this->params['breadcrumbs'][] = $this->title;
                         return Html::a('<span class="glyphicon glyphicon-file"></span>',
                             ['/document', 'company_id' => $key],
                             ['title' => 'Документы', 'aria-label' => 'Документы', 'data-pjax' => '0']);
+                    },
+                    'set' => function ($url, $model, $key) {
+                        if ($model->id == \app\models\Company::getCurrent()) {
+                            return '';
+                        }
+
+                        return Html::a('<span class="glyphicon glyphicon-log-in"></span>',
+                            ['set', 'id' => $model->id],
+                            ['title' => 'Сделать текущей', 'aria-label' => 'Сделать текущей', 'pjax' => 0]);
                     },
                 ],
             ],

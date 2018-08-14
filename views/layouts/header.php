@@ -5,6 +5,7 @@ use yii\bootstrap\Nav;
 
 /* @var $this \yii\web\View */
 /* @var $content string */
+/* @var $company \app\models\Company */
 ?>
 
 <header class="main-header">
@@ -19,10 +20,16 @@ use yii\bootstrap\Nav;
 
         <div class="navbar-custom-menu">
 
-            <?= Nav::widget([
+            <?php
+
+            echo Nav::widget([
                 'options' => ['class' => 'navbar-nav'],
                 'items' => [
 //            ['label' => 'Home', 'url' => ['/site/index']],
+                    [
+                        'label' => $company ? $company->name : 'Выбрать организацию',
+                        'url' => ['/site/set-company'],
+                    ],
                     ['label' => 'О менеджере', 'url' => ['/site/about']],
 //            ['label' => 'Contact', 'url' => ['/site/contact']],
                     Yii::$app->user->isGuest ? (

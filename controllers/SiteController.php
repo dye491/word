@@ -2,8 +2,11 @@
 
 namespace app\controllers;
 
+use app\models\Company;
+use app\models\CurrentCompanyForm;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -125,5 +128,34 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    public function actionSetCompany()
+    {
+        $model = new CurrentCompanyForm();
+        $companies = ArrayHelper::map(Company::find()->filterWhere(['not in', 'id', Company::getCurrent()])->asArray()->all(),
+            'id', 'name');
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->company_id) {
+                $company = Company::findOne(['id' => $model->company_id]);
+                Yii::$app->session->setFlash('success', 'Текущая организация: ' . $company->name);
+                Company::setCurrent($model->company_id);
+
+                return $this->refresh();
+            }
+        }
+
+        return $this->render('set-company', [
+            'model' => $model,
+            'companies' => $companies,
+        ]);
+    }
+
+    public function actionUnsetCompany()
+    {
+        Company::deleteCurrent();
+
+        return $this->redirect('/');
     }
 }

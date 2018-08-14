@@ -6,6 +6,7 @@ namespace app\models;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Query;
+use yii\web\Cookie;
 
 /**
  * This is the model class for table "company".
@@ -171,4 +172,40 @@ class Company extends ActiveRecord
 
         return parent::beforeSave($insert);
     }
+
+    /**
+     * Remembers id of current company in cookie
+     * @param $id
+     */
+    public static function setCurrent($id)
+    {
+        $cookies = \Yii::$app->getResponse()->getCookies();
+        $cookies->add(new Cookie([
+            'name' => 'currentCompany',
+            'value' => $id,
+            'expire' => time() + 7 * 24 * 3600,
+        ]));
+    }
+
+    /**
+     * Returns id of current company, saved in cookie, or null, if this cookie not set
+     * @return null|string
+     */
+    public static function getCurrent()
+    {
+        if ($id = \Yii::$app->request->cookies->get('currentCompany')) {
+            return $id->value;
+        }
+
+        return null;
+    }
+
+    /**
+     * Clears current company id, saved in cookie
+     */
+    public static function deleteCurrent()
+    {
+        \Yii::$app->getResponse()->getCookies()->remove('currentCompany');
+    }
+
 }
