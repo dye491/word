@@ -28,9 +28,26 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Заполнение',
                 'content' => function ($tplModel) use ($model) {
-                    return ($varCount = $model->getVarsCount($tplModel->id)) ?
-                        '<span class="badge">' . ($model->getVarValuesCount($tplModel->id) * 100 / $varCount) . ' %</span>' :
-                        null;
+                    if ($varCount = $model->getVarsCount($tplModel->id)) {
+                        $varValuesCount = $model->getVarValuesCount($tplModel->id);
+                        $options = ['class' => 'badge'];
+                        Html::addCssClass($options, ($varValuesCount == $varCount) ? 'bg-green' : 'bg-red');
+
+                        /*                    return ($varCount = $model->getVarsCount($tplModel->id)) ?
+                                                '<span class="badge">' . round($model->getVarValuesCount($tplModel->id) * 100 / $varCount) . ' %</span>' :
+                                                null;*/
+                        return Html::tag('span',
+                            Html::a(round(($varValuesCount * 100 / $varCount)) . '%',
+                                ['var-index', 'id' => $model->id, 'template_id' => $tplModel->id],
+                                [
+                                    'style' => 'color: white;', 'data-pjax' => 0,
+                                    'title' => 'Редактировать значения переменных',
+                                    'aria-label' => 'Редактировать значения переменных',
+                                ]),
+                            $options);
+                    }
+
+                    return null;
                 },
             ],
             [
@@ -45,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         : '<span class="not-set">(не задано)</span>';
                 },
             ],
-            [
+            /*[
                 'class' => 'yii\grid\ActionColumn',
                 'headerOptions' => ['style' => 'width: 5%;'],
                 'template' => '{var}',
@@ -56,7 +73,7 @@ $this->params['breadcrumbs'][] = $this->title;
                             ['title' => 'Переменные', 'aria-label' => 'Переменные', 'data-pjax' => '0']);
                     },
                 ],
-            ],
+            ],*/
         ],
     ]) ?>
     <?php Pjax::end() ?>

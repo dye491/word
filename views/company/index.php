@@ -84,7 +84,7 @@ $this->params['breadcrumbs'][] = $this->title;
                         Html::addCssClass($options, ($varValuesCount == $varCount) ? 'bg-green' : 'bg-red');
 
                         return Html::tag('span',
-                            Html::a(($varValuesCount * 100 / $varCount) . '%', ['var-index', 'id' => $model->id], [
+                            Html::a(round(($varValuesCount * 100 / $varCount)) . '%', ['var-index', 'id' => $model->id], [
                                 'style' => 'color: white;', 'data-pjax' => 0,
                                 'title' => 'Редактировать значения переменных',
                                 'aria-label' => 'Редактировать значения переменных',
