@@ -2,8 +2,10 @@
 
 namespace app\controllers;
 
+use app\helpers\DateHelper;
 use app\models\Company;
 use app\models\CurrentCompanyForm;
+use app\models\CurrentDateForm;
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
@@ -157,5 +159,21 @@ class SiteController extends Controller
         Company::deleteCurrent();
 
         return $this->redirect('/');
+    }
+
+    public function actionSetDate()
+    {
+        $model = new CurrentDateForm(['curDate' => (new \DateTime(DateHelper::getCurDate()))->format('d.m.Y')]);
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->curDate)
+                DateHelper::setCurDate($model->curDate);
+            else
+                DateHelper::clearCurDate();
+
+            return $this->goHome();
+        }
+
+        return $this->render('set-date', ['model' => $model]);
     }
 }

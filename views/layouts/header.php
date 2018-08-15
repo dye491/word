@@ -30,7 +30,11 @@ use yii\bootstrap\Nav;
                         'label' => $company ? $company->name : 'Выбрать организацию',
                         'url' => ['/site/set-company'],
                     ],
-                    ['label' => 'О менеджере', 'url' => ['/site/about']],
+                    [
+                        'label' => 'Текущая дата: ' . (new DateTime(\app\helpers\DateHelper::getCurDate()))->format('d.m.Y'),
+                        'url' => ['/site/set-date'],
+                    ],
+//                    ['label' => 'О менеджере', 'url' => ['/site/about']],
 //            ['label' => 'Contact', 'url' => ['/site/contact']],
                     Yii::$app->user->isGuest ? (
                     ['label' => 'Login', 'url' => ['/site/login']]
