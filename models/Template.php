@@ -45,6 +45,8 @@ use yii\db\ActiveRecord;
  */
 class Template extends ActiveRecord
 {
+    use ModelTrait;
+
     const
         TEMPLATE_DIR = '@app/templates',
         OUTPUT_DIR = '@app/output';

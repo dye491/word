@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\helpers\DateHelper;
 use app\models\Company;
 use Yii;
 use app\models\Employee;
@@ -33,12 +34,12 @@ class EmployeeController extends Controller
     /**
      * Lists all Employee models for given company.
      * @param $company_id integer
-     * @param $date string|null current date
      * @return mixed
      */
-    public function actionIndex($company_id, $date = null)
+    public function actionIndex($company_id/*, $date = null*/)
     {
-        $date = (new \DateTime($date))->format('Y-m-d');
+//        $date = (new \DateTime($date))->format('Y-m-d');
+        $date = DateHelper::getCurDate();
         $company = $this->findCompany($company_id);
 
         $dataProvider = new ActiveDataProvider([
@@ -61,7 +62,8 @@ class EmployeeController extends Controller
      */
     public function actionCreate($company_id)
     {
-        $curDate = (new \DateTime())->format('Y-m-d');
+//        $curDate = (new \DateTime())->format('Y-m-d');
+        $curDate = DateHelper::getCurDate();
         $model = new Employee(['company_id' => $company_id, 'start_date' => $curDate]);
         $company = $this->findCompany($company_id);
 

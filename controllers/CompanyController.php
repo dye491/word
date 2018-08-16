@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\helpers\DateHelper;
 use app\models\Profile;
 use app\models\Template;
 use Yii;
@@ -89,19 +90,19 @@ class CompanyController extends Controller
     /**
      * Displays variables tied to one or all Company template(s)
      * @param $id
-     * @param null|string $date
      * @param null|integer $template_id
      * @return string
      */
-    public function actionVarIndex($id, $template_id = null, $date = null)
+    public function actionVarIndex($id, $template_id = null/*, $date = null*/)
     {
         Yii::$app->user->setReturnUrl(Yii::$app->request->url);
         $model = $this->findModel($id);
         if ($template_id) {
             $template = Template::findOne(['id' => $template_id]);
         }
+        $date = DateHelper::getCurDate();
         $dataProvider = new ActiveDataProvider([
-            'query' => $model->getVars($template_id),
+            'query' => $model->getVars($template_id, $date),
             'sort' => false,
         ]);
 

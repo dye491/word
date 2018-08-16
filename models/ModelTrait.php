@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\helpers\DateHelper;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use Yii;
@@ -24,11 +25,15 @@ trait ModelTrait
     }
 
     /**
-     * @param $vars
+     * @param $vars array the keys of an array are variable names and the values are callback functions which returns
+     * variable values. The callback signature is function($model, $name), where
+     * $model is ActiveRecord instance and
+     * $name is variable name
      */
     protected function updateVars($vars)
     {
-        $this->curDate = date('Y-m-d');
+//        $this->curDate = date('Y-m-d');
+        $this->curDate = DateHelper::getCurDate();
         $this->models = self::find()->where(['company_id' => $this->company_id])
             ->andWhere(['or', ['<=', 'start_date', $this->curDate], ['start_date' => null]])
             ->andWhere(['or', ['>=', 'end_date', $this->curDate], ['end_date' => null]])->all();
