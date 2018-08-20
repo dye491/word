@@ -19,18 +19,29 @@ use yii\db\ActiveRecord;
  *
  * @property int $id
  * @property string $name
+ * @property string $short_name
  * @property string $file_name
  * @property string $form_class
  * @property string $vars
  * @property string $start_date
  * @property string $end_date
  * @property int $is_active
+ * @property int $parent_id
+ * @property int $is_dir
+ * @property string $org_form
+ * @property int $emp_count
+ * @property string $branch
+ * @property int $is_new
+ * @property int $event_id
  *
  * @property Document[] $documents
  * @property TemplateVar[] $templateVars
  * @property Variable[] $variables
  * @property ProfileTemplate[] $profileTemplates
  * @property Profile[] $profiles
+ * @property Template $parent
+ * @property Template[] $templates
+ * @property Event $event
  */
 class Template extends ActiveRecord
 {
@@ -62,12 +73,17 @@ class Template extends ActiveRecord
     public function rules()
     {
         return [
+            [['short_name'], 'required'],
             [['start_date', 'end_date'], 'safe'],
-            [['is_active'], 'integer'],
-            [['name', 'file_name', 'form_class'], 'string', 'max' => 255],
+            [['is_active', 'is_new', 'emp_count', 'event_id'], 'integer'],
+            [['name', 'short_name', 'file_name', 'form_class', 'branch', 'org_form'], 'string', 'max' => 255],
             [['vars'], 'string', 'max' => 2000],
             [['templateFile'], 'file', 'extensions' => ['docx'], 'maxSize' => 2000000,
                 'checkExtensionByMimeType' => false],
+            [['event_id'], 'exist', 'skipOnError' => true, 'targetClass' => Event::class,
+                'targetAttribute' => ['event_id' => 'id']],
+            [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => Template::class,
+                'targetAttribute' => ['parent_id' => 'id']],
         ];
     }
 
@@ -78,13 +94,20 @@ class Template extends ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Название',
+            'name' => 'Наименование',
+            'short_name' => 'Короткое наименование',
             'file_name' => 'Файл шаблона',
             'form_class' => 'Form Class',
             'vars' => 'Vars',
             'start_date' => Yii::t('app', 'Start Date'),
             'end_date' => Yii::t('app', 'End Date'),
             'is_active' => Yii::t('app', 'Is Active'),
+            'org_form' => 'Организационно-правовая форма',
+            'emp_count' => 'Количествово сотрудников',
+            'branch' => 'Вид деятельности',
+            'is_new' => 'Клиент',
+            'event_id' => 'Внешнее событие',
+            'parent_id' => 'Parent ID',
         ];
     }
 
@@ -460,6 +483,9 @@ class Template extends ActiveRecord
                     ->delete(TemplateVar::tableName(), ['template_id' => $this->id])
                     ->execute();
             }
+
+            if (!$this->file_name) return;
+
             $processor = new TemplateProcessor($this->getTemplatePath());
 
             $varList = $processor->getVariables();
@@ -486,6 +512,57 @@ class Template extends ActiveRecord
      */
     public function getVarNamesFromTemplateFile()
     {
+        if (!$this->file_name) return [];
+
         return (new TemplateProcessor($this->getTemplatePath()))->getVariables();
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getParent()
+    {
+        return $this->hasOne(Template::class, ['id' => 'parent_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTemplates()
+    {
+        return $this->hasMany(Template::class, ['parent_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getEvent()
+    {
+        return $this->hasOne(Event::class, ['id' => 'event_id']);
+    }
+
+    /**
+     * Returns template path as array. Each element of the array is array with the key-value pairs.
+     * The order of array elements is from parent to children.
+     * @param $id int
+     * @return array
+     */
+    public static function getPath($id = null)
+    {
+        $path = [];
+        if (!$id) return $path;
+
+        $stack = [];
+        $model = Template::findOne($id);
+        while ($model) {
+            array_push($stack, ['parent_id' => $model->parent_id, 'name' => $model->name]);
+            if (!($id = $model->parent_id)) break;
+            $model = Template::findOne($id);
+        }
+        while ($stack) {
+            $path[] = array_pop($stack);
+        }
+
+        return $path;
     }
 }

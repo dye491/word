@@ -6,6 +6,8 @@
 
 /* @var $undefinedVars string */
 
+/* @var $events array */
+
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -23,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
     <div class="box-body">
 
-        <?= $this->render('_form', ['model' => $model]) ?>
+        <?= $this->render('_form', ['model' => $model, 'events' => $events]) ?>
     </div>
 </div>
 

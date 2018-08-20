@@ -2,9 +2,13 @@
 
 namespace app\controllers;
 
+use app\helpers\DateHelper;
+use app\models\Event;
 use app\models\Template;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\data\ActiveDataProvider;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -12,20 +16,39 @@ use yii\web\UploadedFile;
 
 class TemplateController extends Controller
 {
-    public function actionIndex()
+    public function actionIndex($parent_id = null)
     {
+        Url::remember(\Yii::$app->request->url);
+
+        $parent_parent_id = $parent_id ? (($parent = (Template::findOne($parent_id))) ? $parent->parent_id : null) : null;
+
         $dataProvider = new ActiveDataProvider([
-            'query' => Template::find(),
+            'query' => Template::find()->where(['parent_id' => $parent_id]),
         ]);
+
+        $path = Template::getPath($parent_id);
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'parent_parent_id' => $parent_parent_id,
+            'path' => $path,
         ]);
     }
 
-    public function actionCreate()
+    public function actionCreate($parent_id = null)
     {
-        $model = new Template();
+        $model = new Template([
+            'is_dir' => false,
+            'parent_id' => $parent_id,
+            'start_date' => DateHelper::getCurDate(),
+        ]);
+        if ($parent_id && (($parent = Template::findOne($parent_id)) !== null)) {
+            $model->event_id = $parent->event_id;
+            $model->branch = $parent->branch;
+            $model->org_form = $parent->org_form;
+            $model->emp_count = $parent->emp_count;
+            $model->is_new = $parent->is_new;
+        }
 
         if ($model->load(\Yii::$app->request->post())) {
             $uploadedFile = UploadedFile::getInstance($model, 'templateFile');
@@ -38,13 +61,16 @@ class TemplateController extends Controller
                     $model->file_name = $uploadedFile->baseName . '.' . $uploadedFile->extension;
                 }
                 if ($model->save(false)) {
-                    return $this->redirect(['index']);
+                    return $this->goBack()/*redirect(['index'])*/
+                        ;
                 }
             }
         }
 
+        $events = ArrayHelper::map(Event::find()->all(), 'id', 'name', 'date');
         return $this->render('create', [
             'model' => $model,
+            'events' => $events,
         ]);
     }
 
@@ -102,15 +128,18 @@ class TemplateController extends Controller
                     $model->file_name = $uploadedFile->baseName . '.' . $uploadedFile->extension;
                 }
                 if ($model->save(false)) {
-                    return $this->redirect('/template');
+                    return $this->goBack()/*redirect('/template')*/
+                        ;
                 }
             }
         }
 
+        $events = ArrayHelper::map(Event::find()->all(), 'id', 'name', 'date');
         return $this->render('edit', [
             'model' => $model,
             'dataProvider' => $dataProvider,
             'undefinedVars' => $undefinedVars,
+            'events' => $events,
         ]);
     }
 

@@ -3,6 +3,7 @@
 namespace app\models;
 
 //use Yii;
+use app\helpers\DateHelper;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 use yii\db\Query;
@@ -18,6 +19,8 @@ use yii\web\Cookie;
  * @property int $profile_id
  * @property string $last_payment
  * @property string $email
+ * @property string $branch
+ * @property int $is_new
  *
  * @property Profile $profile
  * @property Document[] $documents
@@ -40,8 +43,8 @@ class Company extends ActiveRecord
     {
         return [
             [['name', 'email'], 'required'],
-            [['employee_count', 'profile_id'], 'integer'],
-            [['name', 'org_form'], 'string', 'max' => 255],
+            [['employee_count', 'profile_id', 'is_new'], 'integer'],
+            [['name', 'org_form', 'email', 'branch'], 'string', 'max' => 255],
             [['profile_id'], 'exist', 'skipOnError' => true, 'targetClass' => Profile::class, 'targetAttribute' => ['profile_id' => 'id']],
             [['email'], 'email'],
             [['last_payment'], 'date', 'format' => 'php:d.m.Y'],
@@ -61,6 +64,8 @@ class Company extends ActiveRecord
             'profile_id' => 'Профиль',
             'last_payment' => 'Дата заключения договора',
             'email' => 'E-mail',
+            'branch' => 'Вид деятельности',
+            'is_new' => 'Клиент',
         ];
     }
 
@@ -77,7 +82,15 @@ class Company extends ActiveRecord
      */
     public function getTemplates()
     {
-        return $this->profile->getTemplates();
+//        return $this->profile->getTemplates();
+        return Template::find()->where(['or', ['is_dir' => false], ['is_dir' => null]])
+            ->andWhere(['or', ['branch' => $this->branch], ['branch' => null]])
+            ->andWhere(['or', ['org_form' => $this->org_form], ['org_form' => null]])
+            ->andWhere(['or', ['emp_count' => $this->employee_count], ['emp_count' => null]])
+            ->andWhere(['or', ['is_new' => $this->is_new], ['is_new' => null]])
+            ->andWhere(['or', ['<=', 'start_date', DateHelper::getCurDate()], ['start_date' => null]])
+            ->andWhere(['or', ['>=', 'end_date', DateHelper::getCurDate()], ['end_date' => null]]);
+
     }
 
     /**
