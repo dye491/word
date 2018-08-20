@@ -69,9 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ['attribute' => 'file_name',
                 'content' => function ($model) {
                     return $model->file_name ?
-                        Html::a($model->file_name, "/template/download?id={
-    $model->id
-    }&template=yes", ['data-pjax' => 0])
+                        Html::a($model->file_name, "/template/download?id={$model->id}&template=yes", ['data-pjax' => 0])
                         : null;
                 },],
             ['class' => 'yii\grid\ActionColumn',
