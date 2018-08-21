@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\helpers\DateHelper;
 use app\models\Company;
 use Yii;
 use app\models\Ved;
@@ -33,15 +34,15 @@ class VedController extends Controller
     /**
      * Lists all Ved models.
      * @param $company_id integer
-     * @param $date string|null
      * @return mixed
      * @throws NotFoundHttpException
      */
-    public function actionIndex($company_id, $date = null)
+    public function actionIndex($company_id/*, $date = null*/)
     {
         $company = $this->findCompany($company_id);
 
-        $date = (new \DateTime($date))->format('Y-m-d');
+//        $date = (new \DateTime($date))->format('Y-m-d');
+        $date = DateHelper::getCurDate();
 
         $dataProvider = new ActiveDataProvider([
             'query' => Ved::find()->where(['company_id' => $company_id])
@@ -59,12 +60,11 @@ class VedController extends Controller
      * Creates a new Ved model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @param $company_id integer
-     * @param $date string|null
-     *
      * @return mixed
      */
-    public function actionCreate($company_id, $date = null)
+    public function actionCreate($company_id/*, $date = null*/)
     {
+        $date = DateHelper::getCurDate();
         $model = new Ved(['company_id' => $company_id, 'start_date' => $date]);
         $company = $this->findCompany($company_id);
 

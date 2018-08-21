@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\helpers\DateHelper;
 use app\models\Template;
 use Yii;
 use app\models\ProfileTemplate;
@@ -74,8 +75,11 @@ class ProfileTemplateController extends Controller
             ->where(['profile_id' => $profile_id])
             ->asArray()
             ->all(), 'template_id');
+        $date = DateHelper::getCurDate();
         $templates = ArrayHelper::map(Template::find()
             ->where(['not', ['id' => $ids]])
+            ->andWhere(['or', ['<=', 'start_date', $date], ['start_date' => null]])
+            ->andWhere(['or', ['>=', 'end_date', $date], ['end_date' => null]])
             ->asArray()->all(),
             'id', 'name');
 

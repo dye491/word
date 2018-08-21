@@ -94,4 +94,16 @@ class Employee extends ActiveRecord
             'company_member_post_rp' => null,
         ]);
     }
+
+    public function afterDelete()
+    {
+        parent::afterDelete();
+
+        $this->updateVars([
+            'company_member_name_ip' => null,
+            'company_member_name_rp' => null,
+            'company_member_post_ip' => null,
+            'company_member_post_rp' => null,
+        ]);
+    }
 }

@@ -45,6 +45,8 @@ use yii\db\ActiveRecord;
  */
 class Template extends ActiveRecord
 {
+    use ModelTrait;
+
     const
         TEMPLATE_DIR = '@app/templates',
         OUTPUT_DIR = '@app/output';
@@ -564,5 +566,12 @@ class Template extends ActiveRecord
         }
 
         return $path;
+    }
+
+    public function beforeSave($insert)
+    {
+        $this->formatDates();
+
+        return parent::beforeSave($insert);
     }
 }
