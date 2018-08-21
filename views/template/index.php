@@ -72,8 +72,8 @@ $this->params['breadcrumbs'][] = $this->title;
                         Html::a($model->file_name, "/template/download?id={$model->id}&template=yes", ['data-pjax' => 0])
                         : null;
                 },],
-            'start_date:text:Начало действия',
-            'end_date:text:Начало действия',
+            'start_date',
+            'end_date',
             ['class' => 'yii\grid\ActionColumn',
                 //                    'template' => '{update} {edit} {download} {download-pdf}',
                 'template' => '{edit}',
