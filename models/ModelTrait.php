@@ -82,10 +82,10 @@ trait ModelTrait
 
     protected function formatDates()
     {
-        if ($this->dirtyAttributes['start_date']) {
+        if (isset($this->dirtyAttributes['start_date'])) {
             $this->start_date = Yii::$app->formatter->asDate($this->start_date, 'php:Y-m-d');
         }
-        if ($this->dirtyAttributes['end_date']) {
+        if (isset($this->dirtyAttributes['end_date'])) {
             $this->end_date = Yii::$app->formatter->asDate($this->end_date, 'php:Y-m-d');
         }
     }

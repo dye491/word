@@ -1,12 +1,11 @@
 <?php
 /* @var $this yii\web\View */
 /* @var $dataProvider \yii\data\ActiveDataProvider */
-
 /* @var $model \app\models\Template */
-
 /* @var $undefinedVars string */
-
 /* @var $events array */
+
+/* @var $branches array */
 
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -23,10 +22,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="box-header">
         <h3>Параметры шаблона</h3>
     </div>
-    <div class="box-body">
 
-        <?= $this->render('_form', ['model' => $model, 'events' => $events]) ?>
-    </div>
+    <?= $this->render('_form', ['model' => $model, 'events' => $events, 'branches' => $branches]) ?>
 </div>
 
 <div id="template-vars" class="box">

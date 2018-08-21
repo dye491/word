@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\helpers\DateHelper;
+use app\models\Branch;
 use app\models\Event;
 use app\models\Template;
 use yii\helpers\ArrayHelper;
@@ -61,16 +62,17 @@ class TemplateController extends Controller
                     $model->file_name = $uploadedFile->baseName . '.' . $uploadedFile->extension;
                 }
                 if ($model->save(false)) {
-                    return $this->goBack()/*redirect(['index'])*/
-                        ;
+                    return $this->goBack();
                 }
             }
         }
 
         $events = ArrayHelper::map(Event::find()->all(), 'id', 'name', 'date');
+        $branches = ArrayHelper::map(Branch::find()->asArray()->all(), 'id', 'name');
         return $this->render('create', [
             'model' => $model,
             'events' => $events,
+            'branches' => $branches,
         ]);
     }
 
@@ -135,11 +137,13 @@ class TemplateController extends Controller
         }
 
         $events = ArrayHelper::map(Event::find()->all(), 'id', 'name', 'date');
+        $branches = ArrayHelper::map(Branch::find()->asArray()->all(), 'id', 'name');
         return $this->render('edit', [
             'model' => $model,
             'dataProvider' => $dataProvider,
             'undefinedVars' => $undefinedVars,
             'events' => $events,
+            'branches' => $branches,
         ]);
     }
 

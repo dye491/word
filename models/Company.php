@@ -19,10 +19,11 @@ use yii\web\Cookie;
  * @property int $profile_id
  * @property string $last_payment
  * @property string $email
- * @property string $branch
+ * @property int $branch_id
  * @property int $is_new
  *
  * @property Profile $profile
+ * @property Branch $branch
  * @property Document[] $documents
  * @property VarValue[] $varValues
  */
@@ -43,9 +44,10 @@ class Company extends ActiveRecord
     {
         return [
             [['name', 'email'], 'required'],
-            [['employee_count', 'profile_id', 'is_new'], 'integer'],
-            [['name', 'org_form', 'email', 'branch'], 'string', 'max' => 255],
+            [['branch_id', 'employee_count', 'profile_id', 'is_new'], 'integer'],
+            [['name', 'org_form', 'email'], 'string', 'max' => 255],
             [['profile_id'], 'exist', 'skipOnError' => true, 'targetClass' => Profile::class, 'targetAttribute' => ['profile_id' => 'id']],
+            [['branch_id'], 'exist', 'skipOnError' => true, 'targetClass' => Branch::class, 'targetAttribute' => ['branch_id' => 'id']],
             [['email'], 'email'],
             [['last_payment'], 'date', 'format' => 'php:d.m.Y'],
         ];
@@ -64,7 +66,7 @@ class Company extends ActiveRecord
             'profile_id' => 'Профиль',
             'last_payment' => 'Дата заключения договора',
             'email' => 'E-mail',
-            'branch' => 'Вид деятельности',
+            'branch_id' => 'Вид деятельности',
             'is_new' => 'Клиент',
         ];
     }
@@ -78,13 +80,21 @@ class Company extends ActiveRecord
     }
 
     /**
+     * @return ActiveQuery
+     */
+    public function getBranch()
+    {
+        return $this->hasOne(Branch::class, ['id' => 'branch_id']);
+    }
+
+    /**
      * @return \yii\db\ActiveQuery
      */
     public function getTemplates()
     {
 //        return $this->profile->getTemplates();
         return Template::find()->where(['or', ['is_dir' => false], ['is_dir' => null]])
-            ->andWhere(['or', ['branch' => $this->branch], ['branch' => null]])
+            ->andWhere(['or', ['branch_id' => $this->branch_id], ['branch_id' => null]])
             ->andWhere(['or', ['org_form' => $this->org_form], ['org_form' => null]])
             ->andWhere(['or', ['emp_count' => $this->employee_count], ['emp_count' => null]])
             ->andWhere(['or', ['is_new' => $this->is_new], ['is_new' => null]])

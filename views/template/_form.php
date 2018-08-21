@@ -2,6 +2,7 @@
 /* @var $this \yii\web\View */
 
 /* @var $model \app\models\Template */
+/* @var $branches array */
 
 /* @var $events array */
 
@@ -23,7 +24,7 @@ TemplateEditAsset::register($this);
     ]) ?>
     <?= $form->field($model, 'short_name') ?>
     <?= $form->field($model, 'name', ['inputOptions' => ['readonly' => 1, 'class' => 'form-control']]) ?>
-    <?= $form->field($model, 'branch')->dropDownList([null => '', 'jewelers' => 'Ювелиры']) ?>
+    <?= $form->field($model, 'branch_id')->dropDownList(array_merge([null => ''], $branches)) ?>
     <?= $form->field($model, 'org_form')->dropDownList([null => '', 'ooo' => 'ООО', 'ip' => 'ИП']) ?>
     <?= $form->field($model, 'emp_count')->dropDownList([null => '', 1 => '1 сотр.', 2 => '>1 сотр.']) ?>
     <?= $form->field($model, 'is_new')->dropDownList([null => '', 1 => 'Новый', 0 => 'Действующий']) ?>

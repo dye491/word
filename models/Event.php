@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "event".
@@ -71,13 +72,13 @@ class Event extends ActiveRecord
         ];
         $config['short_name'] = $config['name'];
         if (($first_level_model = new Template($config))->save()) {
-            $branches = ['jewelers' => 'Ювелиры'];
+            $branches = ArrayHelper::map(Branch::find()->asArray()->all(), 'id', 'name');
             $org_forms = ['ooo' => 'ООО', 'ip' => 'ИП'];
             $emp_counts = [1 => '1 сотр.', 2 => '>1 сотр.'];
             $items = [];
             foreach ($branches as $key => $branch) {
                 $config['parent_id'] = $first_level_model->id;
-                $config['branch'] = $key;
+                $config['branch_id'] = $key;
                 foreach ($org_forms as $oKey => $org_form) {
                     $config['org_form'] = $oKey;
                     foreach ($emp_counts as $eKey => $emp_count) {

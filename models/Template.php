@@ -10,7 +10,7 @@ use PhpOffice\PhpWord\TemplateProcessor;
 use Unoconv\Unoconv;
 use Yii;
 use yii\helpers\Json;
-use yii\httpclient\Client;
+//use yii\httpclient\Client;
 use yii\web\UploadedFile;
 use yii\db\ActiveRecord;
 
@@ -30,10 +30,11 @@ use yii\db\ActiveRecord;
  * @property int $is_dir
  * @property string $org_form
  * @property int $emp_count
- * @property string $branch
+ * @property int $branch_id
  * @property int $is_new
  * @property int $event_id
  *
+ * @property Branch $branch
  * @property Document[] $documents
  * @property TemplateVar[] $templateVars
  * @property Variable[] $variables
@@ -77,8 +78,8 @@ class Template extends ActiveRecord
         return [
             [['short_name'], 'required'],
             [['start_date', 'end_date'], 'safe'],
-            [['is_active', 'is_new', 'emp_count', 'event_id'], 'integer'],
-            [['name', 'short_name', 'file_name', 'form_class', 'branch', 'org_form'], 'string', 'max' => 255],
+            [['is_active', 'is_new', 'emp_count', 'event_id', 'branch_id'], 'integer'],
+            [['name', 'short_name', 'file_name', 'form_class', 'org_form'], 'string', 'max' => 255],
             [['vars'], 'string', 'max' => 2000],
             [['templateFile'], 'file', 'extensions' => ['docx'], 'maxSize' => 2000000,
                 'checkExtensionByMimeType' => false],
@@ -86,6 +87,8 @@ class Template extends ActiveRecord
                 'targetAttribute' => ['event_id' => 'id']],
             [['parent_id'], 'exist', 'skipOnError' => true, 'targetClass' => Template::class,
                 'targetAttribute' => ['parent_id' => 'id']],
+            [['branch_id'], 'exist', 'skipOnError' => true, 'targetClass' => Branch::class,
+                'targetAttribute' => ['branch_id' => 'id']],
         ];
     }
 
@@ -106,7 +109,7 @@ class Template extends ActiveRecord
             'is_active' => Yii::t('app', 'Is Active'),
             'org_form' => 'Организационно-правовая форма',
             'emp_count' => 'Количествово сотрудников',
-            'branch' => 'Вид деятельности',
+            'branch_id' => 'Вид деятельности',
             'is_new' => 'Клиент',
             'event_id' => 'Внешнее событие',
             'parent_id' => 'Parent ID',
@@ -541,6 +544,14 @@ class Template extends ActiveRecord
     public function getEvent()
     {
         return $this->hasOne(Event::class, ['id' => 'event_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBranch()
+    {
+        return $this->hasOne(Branch::class, ['id' => 'branch_id']);
     }
 
     /**

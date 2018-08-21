@@ -46,4 +46,5 @@ return [
     'Update Employee: {nameAttribute}' => 'Изменить: {nameAttribute}',
     'Hire Date' => 'Дата приема',
     'Dismissal Date' => 'Дата увольнения',
+    'Name' => 'Наименование',
 ];
