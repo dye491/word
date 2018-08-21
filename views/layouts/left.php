@@ -48,9 +48,11 @@
                     ['label' => 'Основные', 'options' => ['class' => 'header']],
                     ['label' => 'Организации', 'icon' => 'building', 'url' => ['/company']],
                     ['label' => 'Настройки', 'options' => ['class' => 'header']],
+                    ['label' => 'Сферы деятельности', 'icon' => 'tags', 'url' => '/branch'],
+                    ['label' => 'Внешние события', 'icon' => 'calendar', 'url' => '/event'],
                     ['label' => 'Шаблоны', 'icon' => 'list-alt', 'url' => '/template'],
                     ['label' => 'Переменные', 'icon' => 'at', 'url' => '/variable'],
-                    ['label' => 'Профили', 'icon' => 'sitemap', 'url' => '/profile'],
+//                    ['label' => 'Профили', 'icon' => 'sitemap', 'url' => '/profile'],
                 ]),
             ]
         ) ?>
