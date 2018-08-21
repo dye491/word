@@ -567,4 +567,11 @@ class Template extends ActiveRecord
 
         return $path;
     }
+
+    public function beforeSave($insert)
+    {
+        $this->formatDates();
+
+        return parent::beforeSave($insert);
+    }
 }
