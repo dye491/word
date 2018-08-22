@@ -34,3 +34,9 @@ tests/_support/_generated
 
 /output
 config/db.php
+/templates
+/views/layouts/main_old.php
+/views/layouts/nav_save.php
+/web/composer.php
+/web/convert.php
+/web/result.pdf
