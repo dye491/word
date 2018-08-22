@@ -68,7 +68,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'type',
                 'label' => 'Тип',
                 'value' => function ($model) {
-                    return $model->var->type === 'string' ? 'строка' : $model;
+                    $types = [
+                        'string' => 'Строка',
+                        'number' => 'Число',
+                        'date' => 'Дата',
+                    ];
+                    return $types[$model->var->type];
                 },
             ],
             [

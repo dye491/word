@@ -11,7 +11,6 @@ use yii\db\ActiveRecord;
  * @property int $id
  * @property string $name
  * @property string $label
- * @property int $template_id
  * @property string $group
  * @property string $type
  *
@@ -36,9 +35,7 @@ class Variable extends ActiveRecord
     {
         return [
             [['name'], 'required'],
-            [['template_id'], 'integer'],
             [['name', 'label', 'group', 'type'], 'string', 'max' => 255],
-            [['template_id'], 'exist', 'skipOnError' => true, 'targetClass' => Template::class, 'targetAttribute' => ['template_id' => 'id']],
         ];
     }
 
@@ -51,18 +48,9 @@ class Variable extends ActiveRecord
             'id' => 'ID',
             'name' => 'Имя переменной',
             'label' => 'Подпись',
-            'template_id' => 'Template ID',
             'group' => 'Группа',
             'type' => 'Тип',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getTemplate()
-    {
-        return $this->hasOne(Template::class, ['id' => 'template_id']);
     }
 
     public static function getByName($name)

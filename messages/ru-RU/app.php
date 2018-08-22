@@ -19,7 +19,7 @@ return [
     'End Date' => 'Дата окончания',
     'Is Active' => 'Активен',
     'Value' => 'Значение',
-    'Edit Var Value: ' => 'Редактировать значение переменной: ',
+    'Edit Var Values' => 'Редактировать значение переменных',
     'Sent At' => 'Отправлен',
     'Status' => 'Статус',
     'The requested page does not exist.' => 'Страница не найдена.',

@@ -18,7 +18,6 @@ class VariableSearch extends Variable
     public function rules()
     {
         return [
-            [['id', 'template_id'], 'integer'],
             [['name', 'label', 'group', 'type'], 'safe'],
         ];
     }
@@ -60,7 +59,6 @@ class VariableSearch extends Variable
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
-            'template_id' => $this->template_id,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])

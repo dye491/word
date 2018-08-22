@@ -42,4 +42,9 @@ class DateHelper
     {
         \Yii::$app->response->cookies->remove('curDate');
     }
+
+    public static function getPrevDate($date)
+    {
+        return (new \DateTime($date))->sub(new \DateInterval('P1D'))->format('Y-m-d');
+    }
 }

@@ -17,9 +17,9 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'label')->textInput(['maxlength' => true]) ?>
 
-<!--    --><?//= $form->field($model, 'group')->textInput(['maxlength' => true]) ?>
+    <!--    --><? //= $form->field($model, 'group')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'type')->dropDownList(['string' => 'Строка', 'number' => 'Число']) ?>
+    <?= $form->field($model, 'type')->dropDownList(['string' => 'Строка', 'number' => 'Число', 'date' => 'Дата']) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>
