@@ -33,10 +33,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 'headerOptions' => ['style' => 'min-width: 33%;'],
             ],
             /*[
-                'attribute' => 'employee_count',
-//                'headerOptions' => ['style' => 'width: 5%;'],
-            ],*/
-            [
                 'attribute' => 'org_form',
                 'value' => function ($model) {
                     switch ($model->org_form) {
@@ -53,13 +49,20 @@ $this->params['breadcrumbs'][] = $this->title;
                     'ip' => 'ИП',
                     'ooo' => 'ООО',
                 ],
-            ],
+            ],*/
             [
-                'attribute' => 'profile_id',
+                'attribute' => 'is_new',
                 'value' => function ($model) {
-                    return $model->profile ? $model->profile->name : null;
+                    if ($model->is_new !== null) {
+                        return $model->is_new ? 'Новый' : 'Действующий';
+                    }
+
+                    return null;
                 },
-                'filter' => ArrayHelper::map(\app\models\Profile::find()->asArray()->all(), 'id', 'name'),
+                'filter' => [
+                    0 => 'Действующий',
+                    1 => 'Новый',
+                ],
             ],
             [
                 'label' => 'Срок действия дог.',
@@ -75,6 +78,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'options' => ['class' => 'form-control'],
                 ]),
             ],
+
             [
                 'label' => 'Заполнение',
                 'content' => function ($model) {

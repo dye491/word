@@ -16,7 +16,7 @@ class CompanySearch extends Company
     public function rules()
     {
         return [
-            [['id', 'employee_count', 'profile_id'], 'integer'],
+            [['id', 'employee_count', 'profile_id', 'is_new'], 'integer'],
             [['name', 'org_form', 'email'], 'safe'],
             [['last_payment'], 'date', 'format' => 'php:d.m.Y'],
         ];
@@ -61,6 +61,7 @@ class CompanySearch extends Company
             'id' => $this->id,
             'employee_count' => $this->employee_count,
             'profile_id' => $this->profile_id,
+            'is_new' => $this->is_new,
         ]);
 
         $query->andFilterWhere(['like', 'name', $this->name])
