@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "template_var".
@@ -16,7 +17,7 @@ use Yii;
  * @property Template $template
  * @property Variable $var
  */
-class TemplateVar extends \yii\db\ActiveRecord
+class TemplateVar extends ActiveRecord
 {
     /**
      * {@inheritdoc}
